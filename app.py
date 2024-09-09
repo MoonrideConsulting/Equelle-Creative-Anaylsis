@@ -71,7 +71,7 @@ def main_dashboard():
 
     num_combos = st.number_input("Pick a number", 2, 4)
 
-    st.dataframe(cross_section_analysis(data, num_combos), fit_column_width = True)
+    st.dataframe(cross_section_analysis(data, num_combos), use_container_width=True)
 
 
 password_protection()
