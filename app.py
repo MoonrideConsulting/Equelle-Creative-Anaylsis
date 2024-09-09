@@ -30,8 +30,8 @@ def cross_section_analysis(data, num_combos):
     for combo in combinations:
         # Group by the combination of columns and aggregate required metrics
         grouped = data.groupby(list(combo)).agg({
-            'Spend': 'sum',
-            'Clicks': 'sum',
+            'Amount Spent': 'sum',
+            'Clicks all': 'sum',
             'Impressions': 'sum',
             'Purchases': 'sum'
         }).reset_index()
