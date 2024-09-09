@@ -32,7 +32,8 @@ def main_dashboard():
         st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
 
     # Rename Cols / Clean Up Df
-    data = st.session_state.full_data.columns.str.replace('_Facebook_Ads', '', regex=False)
+    data = st.session_state.full_data
+    data.columns = data.columns.str.replace('_Facebook_Ads', '', regex=False)
     st.write(data)
 
 password_protection()
