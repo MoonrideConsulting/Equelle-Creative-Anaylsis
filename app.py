@@ -32,17 +32,17 @@ def cross_section_analysis(data, num_combos):
     # Loop through each combination of columns and filter rows that match the combination
     for combo in combinations:
         # Group by the two columns in the combination and calculate sum of purchases
-        grouped = data.groupby(list(combo))['Purchases__Facebook_Ads'].sum().reset_index() 
+        grouped = data.groupby(list(combo))['Purchases'].sum().reset_index() 
     
         # Combine the values in the columns to create a 'Combination' identifier
         grouped['Combination'] = grouped.apply(lambda row: ', '.join([f"{col}={row[col]}" for col in combo]), axis=1)
     
         # Append the results to the combined dataframe
-        combined_results_purchases = pd.concat([combined_results_purchases, grouped[['Combination', 'Purchases__Facebook_Ads']]])
+        combined_results_purchases = pd.concat([combined_results_purchases, grouped[['Combination', 'Purchases']]])
 
 
     # Sort the results by total purchases in descending order
-    combined_results_purchases = combined_results_purchases.sort_values(by='Purchases__Facebook_Ads', ascending=False)
+    combined_results_purchases = combined_results_purchases.sort_values(by='Purchases', ascending=False)
     return combined_results_purchases
 
 
