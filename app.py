@@ -18,7 +18,7 @@ def password_protection():
 
 def cross_section_analysis(data, num_combos):
     # Columns to be used for combinations
-    columns = ['Ad_Format', 'Creative_Theme', 'Messaging_Theme', 'Landing_Page_Type']
+    columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
 
     # Generate all combinations of 2 columns from the 4 available columns
     combinations = list(itertools.combinations(columns, num_combos))
