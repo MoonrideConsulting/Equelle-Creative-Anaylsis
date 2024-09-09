@@ -31,7 +31,8 @@ def main_dashboard():
         WHERE DATE(Date) > "2024-01-01";"""
         st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
 
-    st.write(st.session_state.full_data)
-    
+    # Rename Cols / Clean Up Df
+    data = st.session_state.full_data.columns.str.replace('_Facebook_Ads', '', regex=False)
+    st.write(data)
 
 password_protection()
