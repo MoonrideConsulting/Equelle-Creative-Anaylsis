@@ -40,7 +40,7 @@ def cross_section_analysis(data, num_combos):
         grouped['CPM'] = round((grouped['Amount Spent'] / grouped['Impressions']) * 1000, 2)
         grouped['CPA'] = round(grouped['Amount Spent'] / grouped['Purchases'], 2)
         grouped['CPC'] = round(grouped['Amount Spent'] / grouped['Clicks all'], 2)
-        grouped['Amount Spent'] = round(grouped['Amount Spent'], 2)
+        grouped['Amount Spent'] = round(grouped['Amount Spent'], 0)
 
         # Combine the values in the columns to create a 'Combination' identifier
         grouped['Combination'] = grouped.apply(lambda row: ', '.join([f"{col}={row[col]}" for col in combo]), axis=1)
