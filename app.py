@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas_gbq
 import pandas 
+import itertools
 from google.oauth2 import service_account
 from google.cloud import bigquery
 from plotly.subplots import make_subplots
@@ -13,6 +14,37 @@ st.set_page_config(page_title="Equelle Creative Analysis",page_icon="🧑‍🚀
 
 def password_protection():
         main_dashboard()
+
+
+def cross_section_analysis(data, num_combos):
+    # Columns to be used for combinations
+    columns = ['Ad_Format', 'Creative_Theme', 'Messaging_Theme', 'Landing_Page_Type']
+
+    # Generate all combinations of 2 columns from the 4 available columns
+    combinations = list(itertools.combinations(columns, num_combos))
+
+    # Dictionary to store the results for each combination
+    combination_results = {}
+
+    # Create an empty dataframe to store all results
+    combined_results_purchases = pd.DataFrame()
+
+    # Loop through each combination of columns and filter rows that match the combination
+    for combo in combinations:
+        # Group by the two columns in the combination and calculate sum of purchases
+        grouped = data.groupby(list(combo))['Purchases__Facebook_Ads'].sum().reset_index() 
+    
+        # Combine the values in the columns to create a 'Combination' identifier
+        grouped['Combination'] = grouped.apply(lambda row: ', '.join([f"{col}={row[col]}" for col in combo]), axis=1)
+    
+        # Append the results to the combined dataframe
+        combined_results_purchases = pd.concat([combined_results_purchases, grouped[['Combination', 'Purchases__Facebook_Ads']]])
+
+
+    # Sort the results by total purchases in descending order
+    combined_results_purchases = combined_results_purchases.sort_values(by='Purchases__Facebook_Ads', ascending=False)
+    return combined_results_purchases
+
 
 def main_dashboard():
     st.markdown("<h1 style='text-align: center;'>Equelle Creative Analysis</h1>", unsafe_allow_html=True)
@@ -35,6 +67,11 @@ def main_dashboard():
     data = st.session_state.full_data
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
-    st.write(data)
+    #st.write(data)
+
+    num_combos = st.number_input("Pick a number", 2, 4)
+
+    cross_section_analysis(data, num_combos)
+
 
 password_protection()
