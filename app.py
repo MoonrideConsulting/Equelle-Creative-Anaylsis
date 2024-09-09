@@ -74,7 +74,7 @@ def main_dashboard():
     data = st.session_state.full_data
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
-    #st.write(data)
+    st.write(data.columns)
 
     num_combos = st.number_input("Pick a number", 2, 4)
 
