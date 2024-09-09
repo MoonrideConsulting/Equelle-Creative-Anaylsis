@@ -34,6 +34,7 @@ def main_dashboard():
     # Rename Cols / Clean Up Df
     data = st.session_state.full_data
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
+    data.columns = data.columns.str.replace('_', ' ', regex=False)
     st.write(data)
 
 password_protection()
