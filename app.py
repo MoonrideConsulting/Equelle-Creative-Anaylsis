@@ -37,15 +37,15 @@ def cross_section_analysis(data, num_combos):
         }).reset_index()
 
         # Calculate additional metrics
-        grouped['CPM'] = (grouped['Amount Spent'] / grouped['Impressions']) * 1000
-        grouped['CPA'] = grouped['Amount Spent'] / grouped['Purchases']
-        grouped['CPC'] = grouped['Amount Spent'] / grouped['Clicks all']
+        grouped['CPM'] = round((grouped['Amount Spent'] / grouped['Impressions']) * 1000, 2)
+        grouped['CPA'] = round(grouped['Amount Spent'] / grouped['Purchases'], 2)
+        grouped['CPC'] = rouns(grouped['Amount Spent'] / grouped['Clicks all'], 2)
 
         # Combine the values in the columns to create a 'Combination' identifier
         grouped['Combination'] = grouped.apply(lambda row: ', '.join([f"{col}={row[col]}" for col in combo]), axis=1)
 
         # Append the results to the combined dataframe
-        combined_results = pd.concat([combined_results, grouped[['Combination', 'Amount Spent', 'Clicks all', 'Impressions', 'Purchases', 'CPM', 'CPA', 'CPC']]])
+        combined_results = pd.concat([combined_results, grouped[['Combination', 'Purchases', 'Amount Spent', 'Clicks all', 'Impressions', 'CPM', 'CPA', 'CPC']]])
 
     # Sort the results by Purchases in descending order
     combined_results = combined_results.sort_values(by='Purchases', ascending=False)
