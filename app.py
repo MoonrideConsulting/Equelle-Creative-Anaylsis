@@ -20,30 +20,37 @@ def cross_section_analysis(data, num_combos):
     # Columns to be used for combinations
     columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
 
-    # Generate all combinations of 2 columns from the 4 available columns
+    # Generate all combinations of the specified number of columns
     combinations = list(itertools.combinations(columns, num_combos))
 
-    # Dictionary to store the results for each combination
-    combination_results = {}
-
     # Create an empty dataframe to store all results
-    combined_results_purchases = pd.DataFrame()
+    combined_results = pd.DataFrame()
 
     # Loop through each combination of columns and filter rows that match the combination
     for combo in combinations:
-        # Group by the two columns in the combination and calculate sum of purchases
-        grouped = data.groupby(list(combo))['Purchases'].sum().reset_index() 
-    
+        # Group by the combination of columns and aggregate required metrics
+        grouped = data.groupby(list(combo)).agg({
+            'Spend': 'sum',
+            'Clicks': 'sum',
+            'Impressions': 'sum',
+            'Purchases': 'sum'
+        }).reset_index()
+
+        # Calculate additional metrics
+        grouped['CPM'] = (grouped['Spend'] / grouped['Impressions']) * 1000
+        grouped['CPA'] = grouped['Spend'] / grouped['Purchases']
+        grouped['CPC'] = grouped['Spend'] / grouped['Clicks']
+
         # Combine the values in the columns to create a 'Combination' identifier
         grouped['Combination'] = grouped.apply(lambda row: ', '.join([f"{col}={row[col]}" for col in combo]), axis=1)
-    
+
         # Append the results to the combined dataframe
-        combined_results_purchases = pd.concat([combined_results_purchases, grouped[['Combination', 'Purchases']]])
+        combined_results = pd.concat([combined_results, grouped[['Combination', 'Spend', 'Clicks', 'Impressions', 'Purchases', 'CPM', 'CPA', 'CPC']]])
 
+    # Sort the results by Purchases in descending order
+    combined_results = combined_results.sort_values(by='Purchases', ascending=False)
 
-    # Sort the results by total purchases in descending order
-    combined_results_purchases = combined_results_purchases.sort_values(by='Purchases', ascending=False)
-    return combined_results_purchases
+    return combined_results
 
 
 def main_dashboard():
