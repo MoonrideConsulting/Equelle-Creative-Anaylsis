@@ -37,9 +37,9 @@ def cross_section_analysis(data, num_combos):
         }).reset_index()
 
         # Calculate additional metrics
-        grouped['CPM'] = (grouped['Spend'] / grouped['Impressions']) * 1000
-        grouped['CPA'] = grouped['Spend'] / grouped['Purchases']
-        grouped['CPC'] = grouped['Spend'] / grouped['Clicks']
+        grouped['CPM'] = (grouped['Amount Spent'] / grouped['Impressions']) * 1000
+        grouped['CPA'] = grouped['Amount Spent'] / grouped['Purchases']
+        grouped['CPC'] = grouped['Amount Spent'] / grouped['Clicks all']
 
         # Combine the values in the columns to create a 'Combination' identifier
         grouped['Combination'] = grouped.apply(lambda row: ', '.join([f"{col}={row[col]}" for col in combo]), axis=1)
