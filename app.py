@@ -210,6 +210,9 @@ def main_dashboard():
 
     num_combos = st.number_input("Change number of combinations", 2, 4)
 
+    st.header("Cross Sectional Analysis")
+    st.write("This chart allows you to see metrics across combinations of the 4 variables of interest (Ad Format, Messaging Theme, Creative Theme, and Landing Page Type). By default it is sorted by the number of
+             purchases by can be sorted by other columns by clicking on them (once for desc, twice for asc). You can change the number of variables in the combination by editing the number selecter below.")
     st.dataframe(cross_section_analysis(data, num_combos), use_container_width=True)
 
     st.header("ML Analysis")
