@@ -129,6 +129,58 @@ def feature_importance_analysis(data):
 
     return feature_importance_df
 
+def linear_regression_analysis(data):
+    # Select relevant columns
+    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Spend', 'Clicks', 'Impressions']
+    target = 'Purchases'
+
+    # Separate the input features (X) and target variable (y)
+    X = data[features]
+    y = data[target]
+
+    # One-Hot Encoding for categorical features
+    X_encoded = pd.get_dummies(X[['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']], drop_first=True)
+    
+    # Combine with numerical features
+    X_encoded = pd.concat([X_encoded, X[['Spend', 'Clicks', 'Impressions']]], axis=1)
+
+    # Split the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
+
+    # Initialize and train a Linear Regression model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # Get the model coefficients
+    coefficients = model.coef_
+
+    # Create a DataFrame for feature importance (based on coefficients)
+    feature_importance_df = pd.DataFrame({
+        'Feature': X_encoded.columns,
+        'Coefficient': coefficients
+    })
+
+    # Sort the features by absolute value of coefficients
+    feature_importance_df = feature_importance_df.sort_values(by='Coefficient', key=abs, ascending=False)
+
+    return feature_importance_df
+
+def plot_linear_regression_coefficients(feature_importance_df):
+    # Sort the dataframe by absolute coefficient
+    feature_importance_df = feature_importance_df.sort_values(by='Coefficient', key=abs, ascending=False)
+
+    # Create a Seaborn barplot for coefficients
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Coefficient', y='Feature', data=feature_importance_df, palette='coolwarm')
+    
+    # Add title and labels
+    plt.title('Feature Importance (Linear Regression Coefficients)')
+    plt.xlabel('Coefficient')
+    plt.ylabel('Feature')
+    
+    # Display the plot in Streamlit
+    st.pyplot(plt)
+
 
 def main_dashboard():
     st.markdown("<h1 style='text-align: center;'>Equelle Creative Analysis</h1>", unsafe_allow_html=True)
@@ -161,13 +213,13 @@ def main_dashboard():
     col1, col2 =  st.columns(2)    
     
     with col1:       
-        #modeling
-        model_data = prep_data(data)
+        #random forest analysis
         feature_importance_df = feature_importance_analysis(model_data)
         streamlit_feature_importance_bar_chart(feature_importance_df)
 
     with col2: 
-        st.write("Hopefully this works")
-            
+        #regression analysis
+        regression_data = linear_regression_analysis(model_data) 
+        plot_linear_regression_coefficients(regression_data)
 
 password_protection()
