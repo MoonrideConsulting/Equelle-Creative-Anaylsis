@@ -77,13 +77,6 @@ def prep_data(data):
 
     return model_data
 
-    model_data = cleaned_data.groupby(['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']).agg({
-        'Amount Spent': 'sum',               # Sum 'Spend'
-        'Clicks all': 'sum',              # Sum 'Clicks'
-        'Impressions': 'sum',         # Sum 'Impressions'
-        'Purchases': 'sum'            # Sum 'Purchases'
-    }).reset_index().reset_index()
-
 def streamlit_feature_importance_bar_chart(feature_importance_df):
     # Sort the dataframe by importance
     feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
@@ -91,7 +84,7 @@ def streamlit_feature_importance_bar_chart(feature_importance_df):
     # Create an Altair horizontal bar chart with wider y-axis
     chart = alt.Chart(feature_importance_df).mark_bar().encode(
         x=alt.X('Importance', title='Importance'),
-        y=alt.Y('Feature', sort='-x', axis=alt.Axis(labelLimit=400)),  # Adjust label width
+        y=alt.Y('Feature', sort='-x', title = '', axis=alt.Axis(labelLimit=400)),  # Adjust label width
         color=alt.Color('Importance', scale=alt.Scale(scheme='blues'))
     ).properties(
         title='Feature Importance',
