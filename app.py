@@ -18,6 +18,7 @@ import numpy as np
 
 #plotting
 import matplotlib.pyplot as plt
+import altair as alt
 
 st.set_page_config(page_title="Equelle Creative Analysis",page_icon="🧑‍🚀",layout="wide")
 
@@ -85,10 +86,19 @@ def prep_data(data):
 
 def streamlit_feature_importance_bar_chart(feature_importance_df):
     # Sort the dataframe by importance
-    feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=True)
+    feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
 
-    # Display the bar chart
-    st.bar_chart(feature_importance_df.set_index('Feature'))
+    # Create an Altair horizontal bar chart
+    chart = alt.Chart(feature_importance_df).mark_bar().encode(
+        x=alt.X('Importance', title='Importance'),
+        y=alt.Y('Feature', sort='-x', title='Feature'),
+        color=alt.Color('Importance', scale=alt.Scale(scheme='blues'))
+    ).properties(
+        title='Feature Importance'
+    )
+
+    # Display the chart in Streamlit
+    st.altair_chart(chart, use_container_width=True)
 
 
 # Function to prepare data and train a Random Forest model
