@@ -79,10 +79,10 @@ def prep_data(data):
     return model_data
 
 # Function to prepare data and train a Random Forest model
-def feature_importance_analysis(data):
+def feature_importance_analysis(data, var):
     # Select relevant columns
     features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Amount Spent', 'Clicks all', 'Impressions']
-    target = 'Purchases'
+    target = var
 
     # Separate the input features (X) and target variable (y)
     X = data[features]
@@ -129,10 +129,10 @@ def streamlit_feature_importance_bar_chart(feature_importance_df):
     # Display the chart in Streamlit
     st.altair_chart(chart, use_container_width=True)
 
-def linear_regression_analysis(data):
+def linear_regression_analysis(data, var):
     # Select relevant columns
     features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
-    target = 'Purchases'
+    target = var
 
     # Separate the input features (X) and target variable (y)
     X = data[features]
@@ -210,16 +210,19 @@ def main_dashboard():
     cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
     model_data = prep_data(cleaned_data)
+
+    # Create a select box to choose the metric
+    metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks all', 'Amount Spent'])
         
     col1, col2 =  st.columns(2)    
     with col1:       
         #random forest analysis
-        feature_importance_df = feature_importance_analysis(model_data)
+        feature_importance_df = feature_importance_analysis(model_data, metric)
         streamlit_feature_importance_bar_chart(feature_importance_df)
 
     with col2: 
         #regression analysis
-        regression_data = linear_regression_analysis(model_data) 
+        regression_data = linear_regression_analysis(model_data, metric) 
         plot_linear_regression_coefficients(regression_data)
 
 password_protection()
