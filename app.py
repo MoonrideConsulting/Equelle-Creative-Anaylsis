@@ -209,7 +209,7 @@ def main_dashboard():
     st.dataframe(cross_section_analysis(data, num_combos), use_container_width=True)
 
     st.header("ML Analysis")
-    cleaned_data = raw_data.dropna()
+    cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
         
     col1, col2 =  st.columns(2)    
