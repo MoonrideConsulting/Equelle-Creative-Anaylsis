@@ -202,7 +202,7 @@ def main_dashboard():
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
 
-    num_combos = st.number_input("Pick a number", 2, 4)
+    num_combos = st.number_input("Change number of combinations", 2, 4)
 
     st.dataframe(cross_section_analysis(data, num_combos), use_container_width=True)
 
