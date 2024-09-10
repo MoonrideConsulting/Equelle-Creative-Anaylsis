@@ -209,9 +209,10 @@ def main_dashboard():
     st.dataframe(cross_section_analysis(data, num_combos), use_container_width=True)
 
     st.header("ML Analysis")
-
+    cleaned_data = raw_data.dropna()
+    cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
+        
     col1, col2 =  st.columns(2)    
-    
     with col1:       
         #random forest analysis
         feature_importance_df = feature_importance_analysis(model_data)
