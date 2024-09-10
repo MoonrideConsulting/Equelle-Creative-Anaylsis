@@ -10,6 +10,15 @@ from google.cloud import bigquery
 from plotly.subplots import make_subplots
 from datetime import datetime, timedelta
 
+#For random forest modeling
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder
+import numpy as np
+
+#plotting
+import matplotlib.pyplot as plt
+
 st.set_page_config(page_title="Equelle Creative Analysis",page_icon="🧑‍🚀",layout="wide")
 
 def password_protection():
@@ -53,6 +62,65 @@ def cross_section_analysis(data, num_combos):
 
     return combined_results
 
+def prep_data(data):
+    #Remove NAs
+    cleaned_data = data.dropna()
+    cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
+
+    #Group data
+    model_data = cleaned_data.groupby(['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']).agg({
+        'Amount Spent': 'sum',               # Sum 'Spend'
+        'Clicks all': 'sum',              # Sum 'Clicks'
+        'Impressions': 'sum',         # Sum 'Impressions'
+        'Purchases': 'sum'            # Sum 'Purchases'
+    }).reset_index()
+
+    return model_data
+
+model_data = cleaned_data.groupby(['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']).agg({
+    'Amount Spent': 'sum',               # Sum 'Spend'
+    'Clicks all': 'sum',              # Sum 'Clicks'
+    'Impressions': 'sum',         # Sum 'Impressions'
+    'Purchases': 'sum'            # Sum 'Purchases'
+}).reset_index().reset_index()
+
+# Function to prepare data and train a Random Forest model
+def feature_importance_analysis(data):
+    # Select relevant columns
+    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Amount Spent', 'Clicks all', 'Impressions']
+    target = 'Purchases'
+
+    # Separate the input features (X) and target variable (y)
+    X = data[features]
+    y = data[target]
+
+    # One-Hot Encoding for categorical features
+    X_encoded = pd.get_dummies(X[['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']], drop_first=True)
+    
+    # Combine with numerical features
+    X_encoded = pd.concat([X_encoded, X[['Spend', 'Clicks', 'Impressions']]], axis=1)
+
+    # Split the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
+
+    # Initialize and train a Random Forest Regressor
+    model = RandomForestRegressor(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
+
+    # Get feature importances
+    feature_importances = model.feature_importances_
+
+    # Create a DataFrame for feature importance ranking
+    feature_importance_df = pd.DataFrame({
+        'Feature': X_encoded.columns,
+        'Importance': feature_importances
+    })
+
+    # Sort the features by importance
+    feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
+
+    return feature_importance_df
+
 
 def main_dashboard():
     st.markdown("<h1 style='text-align: center;'>Equelle Creative Analysis</h1>", unsafe_allow_html=True)
@@ -80,5 +148,11 @@ def main_dashboard():
 
     st.dataframe(cross_section_analysis(data, num_combos), use_container_width=True)
 
+    st.header("ML Analysis")
+
+    #modeling
+    model_data = prep_data(data)
+    feature_importance_df = feature_importance_analysis(model_data)
+    
 
 password_protection()
