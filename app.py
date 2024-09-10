@@ -211,10 +211,11 @@ def main_dashboard():
     num_combos = st.number_input("Change number of combinations", 2, 4)
 
     st.header("Cross Sectional Analysis")
-    st.write("This chart allows you to see metrics across combinations of the 4 variables of interest (Ad Format, Messaging Theme, Creative Theme, and Landing Page Type). By default it is sorted by the number of purchases by can be sorted by other columns by clicking on them (once for desc, twice for asc). You can change the number of variables in the combination by editing the number selecter below.")
+    st.write("This chart allows you to see metrics across combinations of the 4 variables of interest (Ad Format, Messaging Theme, Creative Theme, and Landing Page Type). By default it is sorted by the number of purchases but can be sorted by other columns by clicking on them (once for desc, twice for asc). You can change the number of variables in the combination by editing the number selecter below.")
     st.dataframe(cross_section_analysis(data, num_combos), use_container_width=True)
 
     st.header("ML Analysis")
+    st.write("This section shows the output from two different types of models looking at how different values of the 4 variables of interest impact the the target metric. To give context, feature importance plots reveal which values of said variables most impact outcomes like purchases. The Random Forest plot ranks factors by their influence, without indicating whether they improve or harm results. The Linear Regression plot ranks factors and shows whether increasing or decreasing them will affect results positively or negatively. While these visuals help prioritize key factors, they don’t explain why factors matter or capture complex interactions.")
     cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
     model_data = prep_data(cleaned_data)
