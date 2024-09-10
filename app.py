@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.linear_model import LinearRegression
 import numpy as np
 
 #plotting
