@@ -78,24 +78,6 @@ def prep_data(data):
 
     return model_data
 
-def streamlit_feature_importance_bar_chart(feature_importance_df):
-    # Sort the dataframe by importance
-    feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
-
-    # Create an Altair horizontal bar chart with wider y-axis
-    chart = alt.Chart(feature_importance_df).mark_bar().encode(
-        x=alt.X('Importance', title='Importance'),
-        y=alt.Y('Feature', sort='-x', title = '', axis=alt.Axis(labelLimit=400)),  # Adjust label width
-        color=alt.Color('Importance', scale=alt.Scale(scheme='blues'))
-    ).properties(
-        title='Feature Importance',
-        width=600  # Adjust the chart width if needed
-    )
-
-    # Display the chart in Streamlit
-    st.altair_chart(chart, use_container_width=True)
-
-
 # Function to prepare data and train a Random Forest model
 def feature_importance_analysis(data):
     # Select relevant columns
@@ -129,6 +111,23 @@ def feature_importance_analysis(data):
     feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
 
     return feature_importance_df
+
+def streamlit_feature_importance_bar_chart(feature_importance_df):
+    # Sort the dataframe by importance
+    feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
+
+    # Create an Altair horizontal bar chart with wider y-axis
+    chart = alt.Chart(feature_importance_df).mark_bar().encode(
+        x=alt.X('Importance', title='Importance'),
+        y=alt.Y('Feature', sort='-x', title = '', axis=alt.Axis(labelLimit=400)),  # Adjust label width
+        color=alt.Color('Importance', scale=alt.Scale(scheme='blues'))
+    ).properties(
+        title='Feature Importance',
+        width=600  # Adjust the chart width if needed
+    )
+
+    # Display the chart in Streamlit
+    st.altair_chart(chart, use_container_width=True)
 
 def linear_regression_analysis(data):
     # Select relevant columns
@@ -170,7 +169,7 @@ def plot_linear_regression_coefficients(feature_importance_df):
     # Create an Altair horizontal bar chart for coefficients
     chart = alt.Chart(feature_importance_df).mark_bar().encode(
         x=alt.X('Coefficient', title='Coefficient'),
-        y=alt.Y('Feature', sort='-x', title='Feature'),
+        y=alt.Y('Feature', sort='-x', title = '', axis=alt.Axis(labelLimit=400)),  # Adjust label width
         color=alt.Color('Coefficient', scale=alt.Scale(scheme='blueorange'))
     ).properties(
         title='Feature Importance (Linear Regression Coefficients)',
