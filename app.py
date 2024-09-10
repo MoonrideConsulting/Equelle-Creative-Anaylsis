@@ -91,7 +91,7 @@ def streamlit_feature_importance_bar_chart(feature_importance_df):
     # Create an Altair horizontal bar chart with wider y-axis
     chart = alt.Chart(feature_importance_df).mark_bar().encode(
         x=alt.X('Importance', title='Importance'),
-        y=alt.Y('', sort='-x', title='Feature', axis=alt.Axis(labelLimit=400)),  # Adjust label width
+        y=alt.Y('Feature', sort='-x', axis=alt.Axis(labelLimit=400)),  # Adjust label width
         color=alt.Color('Importance', scale=alt.Scale(scheme='blues'))
     ).properties(
         title='Feature Importance',
