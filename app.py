@@ -88,13 +88,14 @@ def streamlit_feature_importance_bar_chart(feature_importance_df):
     # Sort the dataframe by importance
     feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
 
-    # Create an Altair horizontal bar chart
+    # Create an Altair horizontal bar chart with wider y-axis
     chart = alt.Chart(feature_importance_df).mark_bar().encode(
         x=alt.X('Importance', title='Importance'),
-        y=alt.Y('Feature', sort='-x', title='Feature'),
+        y=alt.Y('Feature', sort='-x', title='Feature', axis=alt.Axis(labelLimit=200)),  # Adjust label width
         color=alt.Color('Importance', scale=alt.Scale(scheme='blues'))
     ).properties(
-        title='Feature Importance'
+        title='Feature Importance',
+        width=600  # Adjust the chart width if needed
     )
 
     # Display the chart in Streamlit
