@@ -131,7 +131,7 @@ def feature_importance_analysis(data):
 
 def linear_regression_analysis(data):
     # Select relevant columns
-    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Spend', 'Clicks', 'Impressions']
+    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
     target = 'Purchases'
 
     # Separate the input features (X) and target variable (y)
@@ -140,9 +140,6 @@ def linear_regression_analysis(data):
 
     # One-Hot Encoding for categorical features
     X_encoded = pd.get_dummies(X[['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']], drop_first=True)
-    
-    # Combine with numerical features
-    X_encoded = pd.concat([X_encoded, X[['Spend', 'Clicks', 'Impressions']]], axis=1)
 
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
