@@ -77,12 +77,12 @@ def prep_data(data):
 
     return model_data
 
-model_data = cleaned_data.groupby(['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']).agg({
-    'Amount Spent': 'sum',               # Sum 'Spend'
-    'Clicks all': 'sum',              # Sum 'Clicks'
-    'Impressions': 'sum',         # Sum 'Impressions'
-    'Purchases': 'sum'            # Sum 'Purchases'
-}).reset_index().reset_index()
+    model_data = cleaned_data.groupby(['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']).agg({
+        'Amount Spent': 'sum',               # Sum 'Spend'
+        'Clicks all': 'sum',              # Sum 'Clicks'
+        'Impressions': 'sum',         # Sum 'Impressions'
+        'Purchases': 'sum'            # Sum 'Purchases'
+    }).reset_index().reset_index()
 
 # Function to prepare data and train a Random Forest model
 def feature_importance_analysis(data):
