@@ -164,20 +164,21 @@ def linear_regression_analysis(data):
     return feature_importance_df
 
 def plot_linear_regression_coefficients(feature_importance_df):
-    # Sort the dataframe by absolute coefficient
+    # Sort the dataframe by absolute value of coefficients
     feature_importance_df = feature_importance_df.sort_values(by='Coefficient', key=abs, ascending=False)
 
-    # Create a Seaborn barplot for coefficients
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x='Coefficient', y='Feature', data=feature_importance_df, palette='coolwarm')
-    
-    # Add title and labels
-    plt.title('Feature Importance (Linear Regression Coefficients)')
-    plt.xlabel('Coefficient')
-    plt.ylabel('Feature')
-    
-    # Display the plot in Streamlit
-    st.pyplot(plt)
+    # Create an Altair horizontal bar chart for coefficients
+    chart = alt.Chart(feature_importance_df).mark_bar().encode(
+        x=alt.X('Coefficient', title='Coefficient'),
+        y=alt.Y('Feature', sort='-x', title='Feature'),
+        color=alt.Color('Coefficient', scale=alt.Scale(scheme='blueorange'))
+    ).properties(
+        title='Feature Importance (Linear Regression Coefficients)',
+        width=600  # Set the width of the chart
+    )
+
+    # Display the chart in Streamlit
+    st.altair_chart(chart, use_container_width=True)
 
 
 def main_dashboard():
