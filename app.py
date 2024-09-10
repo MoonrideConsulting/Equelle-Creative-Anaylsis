@@ -158,10 +158,16 @@ def main_dashboard():
 
     st.header("ML Analysis")
 
-    #modeling
-    model_data = prep_data(data)
-    feature_importance_df = feature_importance_analysis(model_data)
-    streamlit_feature_importance_bar_chart(feature_importance_df)
+    col1, col2 =  st.columns(2)    
     
+    with col1:       
+        #modeling
+        model_data = prep_data(data)
+        feature_importance_df = feature_importance_analysis(model_data)
+        streamlit_feature_importance_bar_chart(feature_importance_df)
+
+    with col2: 
+        st.write("Hopefully this works")
+            
 
 password_protection()
