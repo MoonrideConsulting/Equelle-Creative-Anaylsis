@@ -218,7 +218,7 @@ def main_dashboard():
     model_data = prep_data(cleaned_data)
 
     # Create a select box to choose the metric
-    metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks all', 'Amount Spent', 'CPM', 'CPA', 'CPC'])
+    metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks all', 'Amount Spent'])
         
     col1, col2 =  st.columns(2)    
     with col1:       
