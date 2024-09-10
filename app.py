@@ -24,7 +24,6 @@ st.set_page_config(page_title="Equelle Creative Analysis",page_icon="🧑‍🚀
 def password_protection():
         main_dashboard()
 
-
 def cross_section_analysis(data, num_combos):
     # Columns to be used for combinations
     columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
@@ -83,6 +82,14 @@ def prep_data(data):
         'Impressions': 'sum',         # Sum 'Impressions'
         'Purchases': 'sum'            # Sum 'Purchases'
     }).reset_index().reset_index()
+
+def streamlit_feature_importance_bar_chart(feature_importance_df):
+    # Sort the dataframe by importance
+    feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=True)
+
+    # Display the bar chart
+    st.bar_chart(feature_importance_df.set_index('Feature'))
+
 
 # Function to prepare data and train a Random Forest model
 def feature_importance_analysis(data):
@@ -150,6 +157,7 @@ def main_dashboard():
     #modeling
     model_data = prep_data(data)
     feature_importance_df = feature_importance_analysis(model_data)
+    streamlit_feature_importance_bar_chart(feature_importance_df)
     
 
 password_protection()
