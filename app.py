@@ -80,7 +80,8 @@ def prep_data(data):
     model_data['CPA'] = round(model_data['Amount Spent'] / model_data['Purchases'], 2)
     model_data['CPC'] = round(model_data['Amount Spent'] / model_data['Clicks all'], 2)
     model_data['Amount Spent'] = round(model_data['Amount Spent'], 0)
-
+    model_data.dropna(inplace = True)
+        
     return model_data
 
 # Function to prepare data and train a Random Forest model
