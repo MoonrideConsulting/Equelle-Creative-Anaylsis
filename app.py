@@ -76,6 +76,11 @@ def prep_data(data):
         'Purchases': 'sum'            # Sum 'Purchases'
     }).reset_index()
 
+    model_data['CPM'] = round((model_data['Amount Spent'] / model_data['Impressions']) * 1000, 2)
+    model_data['CPA'] = round(model_data['Amount Spent'] / model_data['Purchases'], 2)
+    model_data['CPC'] = round(model_data['Amount Spent'] / model_data['Clicks all'], 2)
+    model_data['Amount Spent'] = round(model_data['Amount Spent'], 0)
+
     return model_data
 
 # Function to prepare data and train a Random Forest model
@@ -212,7 +217,7 @@ def main_dashboard():
     model_data = prep_data(cleaned_data)
 
     # Create a select box to choose the metric
-    metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks all', 'Amount Spent'])
+    metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks all', 'Amount Spent', 'CPM', 'CPA', 'CPC'])
         
     col1, col2 =  st.columns(2)    
     with col1:       
