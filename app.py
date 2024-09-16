@@ -16,6 +16,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 #plotting
@@ -153,27 +154,34 @@ def generate_interaction_terms(X_encoded, level):
         # Return the DataFrame with interaction terms
         return pd.DataFrame(X_interactions, columns=interaction_feature_names)
 
-
-# Main linear regression analysis function
+# Main linear regression analysis function with scaling and handling of empty strings
 def linear_regression_analysis(data, var, combination_level):
     # Select relevant columns
-    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
+    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Spend', 'Clicks', 'Impressions']
     target = var
 
-    if target == "Clicks":
-            target = "Clicks all"
-    if target == "Spend":
-            target = "Amount Spent"
+    # Replace empty strings with NaN
+    data[features] = data[features].replace("", np.nan)
+
+    # Drop rows with any null values (NaN) in the selected features
+    data_clean = data.dropna(subset=features)
 
     # Separate the input features (X) and target variable (y)
-    X = data[features]
-    y = data[target]
+    X = data_clean[features]
+    y = data_clean[target]
 
     # One-Hot Encoding for categorical features
     X_encoded = pd.get_dummies(X[['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']], drop_first=True)
 
+    # Combine with numeric features (Spend, Clicks, Impressions)
+    X_combined = pd.concat([X_encoded, X[['Spend', 'Clicks', 'Impressions']]], axis=1)
+
+    # Scale numeric features to balance ranges
+    scaler = StandardScaler()
+    X_combined[['Spend', 'Clicks', 'Impressions']] = scaler.fit_transform(X_combined[['Spend', 'Clicks', 'Impressions']])
+
     # Generate interaction terms based on the user-selected combination level
-    X_interactions = generate_interaction_terms(X_encoded, combination_level)
+    X_interactions = generate_interaction_terms(X_combined, combination_level)
 
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X_interactions, y, test_size=0.2, random_state=42)
