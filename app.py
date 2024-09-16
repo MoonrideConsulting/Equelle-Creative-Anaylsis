@@ -168,11 +168,11 @@ def linear_regression_analysis(data, var, combination_level):
     X_encoded = pd.get_dummies(X[['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']], drop_first=True)
 
     # Combine with numeric features (Spend, Clicks, Impressions)
-    X_combined = pd.concat([X_encoded, X[['Spend', 'Clicks', 'Impressions']]], axis=1)
+    X_combined = pd.concat([X_encoded, X[['Amount Spent', 'Clicks all', 'Impressions']]], axis=1)
 
     # Scale numeric features to balance ranges
     scaler = StandardScaler()
-    X_combined[['Spend', 'Clicks', 'Impressions']] = scaler.fit_transform(X_combined[['Spend', 'Clicks', 'Impressions']])
+    X_combined[['Amount Spent', 'Clicks all', 'Impressions']] = scaler.fit_transform(X_combined[['Spend', 'Clicks', 'Impressions']])
 
     # Generate interaction terms based on the user-selected combination level
     X_interactions = generate_interaction_terms(X_combined, combination_level)
