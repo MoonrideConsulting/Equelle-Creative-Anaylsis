@@ -15,6 +15,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
 import numpy as np
 
 #plotting
@@ -135,7 +136,24 @@ def streamlit_feature_importance_bar_chart(feature_importance_df):
     # Display the chart in Streamlit
     st.altair_chart(chart, use_container_width=True)
 
-def linear_regression_analysis(data, var):
+# Function to generate interaction terms
+def generate_interaction_terms(X_encoded, level):
+    if level == 1:  # No interaction terms
+        return X_encoded
+    else:
+        # Create polynomial features for interaction terms
+        poly = PolynomialFeatures(degree=level, interaction_only=True, include_bias=False)
+        X_interactions = poly.fit_transform(X_encoded)
+        
+        # Get feature names for the interaction terms
+        interaction_feature_names = poly.get_feature_names_out(X_encoded.columns)
+        
+        # Return the DataFrame with interaction terms
+        return pd.DataFrame(X_interactions, columns=interaction_feature_names)
+
+
+# Main linear regression analysis function
+def linear_regression_analysis(data, var, combination_level):
     # Select relevant columns
     features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
     target = var
@@ -147,8 +165,11 @@ def linear_regression_analysis(data, var):
     # One-Hot Encoding for categorical features
     X_encoded = pd.get_dummies(X[['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']], drop_first=True)
 
+    # Generate interaction terms based on the user-selected combination level
+    X_interactions = generate_interaction_terms(X_encoded, combination_level)
+
     # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_interactions, y, test_size=0.2, random_state=42)
 
     # Initialize and train a Linear Regression model
     model = LinearRegression()
@@ -159,7 +180,7 @@ def linear_regression_analysis(data, var):
 
     # Create a DataFrame for feature importance (based on coefficients)
     feature_importance_df = pd.DataFrame({
-        'Feature': X_encoded.columns,
+        'Feature': X_interactions.columns,
         'Coefficient': coefficients
     })
 
@@ -168,6 +189,7 @@ def linear_regression_analysis(data, var):
 
     return feature_importance_df
 
+# Plotting function remains mostly the same
 def plot_linear_regression_coefficients(feature_importance_df):
     # Sort the dataframe by absolute value of coefficients
     feature_importance_df = feature_importance_df.sort_values(by='Coefficient', key=abs, ascending=False)
@@ -175,7 +197,7 @@ def plot_linear_regression_coefficients(feature_importance_df):
     # Create an Altair horizontal bar chart for coefficients
     chart = alt.Chart(feature_importance_df).mark_bar().encode(
         x=alt.X('Coefficient', title='Coefficient'),
-        y=alt.Y('Feature', sort='-x', title = '', axis=alt.Axis(labelLimit=400)),  # Adjust label width
+        y=alt.Y('Feature', sort='-x', title='', axis=alt.Axis(labelLimit=400)),  # Adjust label width
         color=alt.Color('Coefficient', scale=alt.Scale(scheme='blueorange'))
     ).properties(
         title='Feature Importance (Linear Regression Coefficients)',
@@ -222,16 +244,25 @@ def main_dashboard():
 
     # Create a select box to choose the metric
     metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks all', 'Amount Spent'])
-        
-    col1, col2 =  st.columns(2)    
-    with col1:       
-        #random forest analysis
-        feature_importance_df = feature_importance_analysis(model_data, metric)
-        streamlit_feature_importance_bar_chart(feature_importance_df)
 
-    with col2: 
-        #regression analysis
-        regression_data = linear_regression_analysis(model_data, metric) 
-        plot_linear_regression_coefficients(regression_data)
+    # Streamlit logic for user interaction
+    combination_level = st.radio('Select Number of Variables in Combination:', [1, 2, 3, 4])
+        
+    #col1, col2 =  st.columns(2)    
+    #with col1:       
+        #random forest analysis
+        #feature_importance_df = feature_importance_analysis(model_data, metric)
+        #streamlit_feature_importance_bar_chart(feature_importance_df)
+
+    #with col2: 
+
+    # Run the linear regression analysis based on user selection and selected metric (e.g., Purchases)
+    selected_metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks', 'Spend'])
+
+    # Perform linear regression with interaction terms
+    feature_importance_df = linear_regression_analysis(data, selected_metric, combination_level)
+
+    # Plot the resulting feature importance
+    plot_linear_regression_coefficients(feature_importance_df)
 
 password_protection()
