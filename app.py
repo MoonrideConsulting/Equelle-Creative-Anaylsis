@@ -142,7 +142,7 @@ def streamlit_feature_importance_bar_chart(feature_importance_df):
 # Function to generate interaction terms
 def generate_interaction_terms(X_encoded, level):
     if level == 1:  # No interaction terms
-        return X_encoded
+        return X_encoded  # This case should only be used if you want individual features (we'll focus on combinations)
     else:
         # Create polynomial features for interaction terms
         poly = PolynomialFeatures(degree=level, interaction_only=True, include_bias=False)
@@ -151,10 +151,10 @@ def generate_interaction_terms(X_encoded, level):
         # Get feature names for the interaction terms
         interaction_feature_names = poly.get_feature_names_out(X_encoded.columns)
         
-        # Return the DataFrame with interaction terms
+        # Return the DataFrame with interaction terms (no individual features)
         return pd.DataFrame(X_interactions, columns=interaction_feature_names)
 
-# Main linear regression analysis function with scaling and handling of empty strings
+# Main linear regression analysis function with handling of empty strings and combinations
 def linear_regression_analysis(data, var, combination_level):
     # Select relevant columns
     features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
@@ -165,17 +165,16 @@ def linear_regression_analysis(data, var, combination_level):
     y = data[target]
 
     # One-Hot Encoding for categorical features
-    X_encoded = pd.get_dummies(X[['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']], drop_first=True)
-
-    # Combine with numeric features (Spend, Clicks, Impressions)
-    X_combined = pd.concat([X_encoded, X[['Amount Spent', 'Clicks all', 'Impressions']]], axis=1)
-
-    # Scale numeric features to balance ranges
-    scaler = StandardScaler()
-    X_combined[['Amount Spent', 'Clicks all', 'Impressions']] = scaler.fit_transform(X_combined[['Amount Spent', 'Clicks all', 'Impressions']])
+    X_encoded = pd.get_dummies(X, drop_first=True)
 
     # Generate interaction terms based on the user-selected combination level
-    X_interactions = generate_interaction_terms(X_combined, combination_level)
+    X_interactions = generate_interaction_terms(X_encoded, combination_level)
+
+    # Remove individual features from the interaction terms
+    if combination_level > 1:
+        # Filter only interaction terms (exclude individual feature terms)
+        feature_columns = [col for col in X_interactions.columns if "_" in col]
+        X_interactions = X_interactions[feature_columns]
 
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X_interactions, y, test_size=0.2, random_state=42)
@@ -198,7 +197,7 @@ def linear_regression_analysis(data, var, combination_level):
 
     return feature_importance_df
 
-# Plotting function remains mostly the same
+# Plotting function remains the same with the hidden legend
 def plot_linear_regression_coefficients(feature_importance_df):
     # Sort the dataframe by absolute value of coefficients
     feature_importance_df = feature_importance_df.sort_values(by='Coefficient', key=abs, ascending=False)
@@ -207,7 +206,7 @@ def plot_linear_regression_coefficients(feature_importance_df):
     chart = alt.Chart(feature_importance_df).mark_bar().encode(
         x=alt.X('Coefficient', title='Coefficient'),
         y=alt.Y('Feature', sort='-x', title='', axis=alt.Axis(labelLimit=400)),  # Adjust label width
-        color=alt.Color('Coefficient', scale=alt.Scale(scheme='blueorange'), legend=None)
+        color=alt.Color('Coefficient', scale=alt.Scale(scheme='blueorange'), legend=None)  # Hide the legend
     ).properties(
         title='Feature Importance (Linear Regression Coefficients)',
         width=600  # Set the width of the chart
@@ -215,7 +214,6 @@ def plot_linear_regression_coefficients(feature_importance_df):
 
     # Display the chart in Streamlit
     st.altair_chart(chart, use_container_width=True)
-
 
 def main_dashboard():
     st.markdown("<h1 style='text-align: center;'>Equelle Creative Analysis</h1>", unsafe_allow_html=True)
