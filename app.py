@@ -157,7 +157,7 @@ def generate_interaction_terms(X_encoded, level):
 # Main linear regression analysis function with scaling and handling of empty strings
 def linear_regression_analysis(data, var, combination_level):
     # Select relevant columns
-    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Spend', 'Clicks', 'Impressions']
+    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
     target = var
 
     # Replace empty strings with NaN
