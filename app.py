@@ -172,7 +172,7 @@ def linear_regression_analysis(data, var, combination_level):
 
     # Scale numeric features to balance ranges
     scaler = StandardScaler()
-    X_combined[['Amount Spent', 'Clicks all', 'Impressions']] = scaler.fit_transform(X_combined[['Spend', 'Clicks', 'Impressions']])
+    X_combined[['Amount Spent', 'Clicks all', 'Impressions']] = scaler.fit_transform(X_combined[['Amount Spent', 'Clicks all', 'Impressions']])
 
     # Generate interaction terms based on the user-selected combination level
     X_interactions = generate_interaction_terms(X_combined, combination_level)
