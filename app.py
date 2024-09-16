@@ -230,7 +230,7 @@ def main_dashboard():
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
 
-    num_combos = st.number_input("Change number of combinations", 1, 4)
+    num_combos = st.number_input("Change number of combinations", 2, 4)
 
     st.header("Cross Sectional Analysis")
     st.write("This chart allows you to see metrics across combinations of the 4 variables of interest (Ad Format, Messaging Theme, Creative Theme, and Landing Page Type). By default it is sorted by the number of purchases but can be sorted by other columns by clicking on them (once for desc, twice for asc). You can change the number of variables in the combination by editing the number selecter below.")
