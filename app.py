@@ -203,7 +203,7 @@ def plot_linear_regression_coefficients(feature_importance_df):
     chart = alt.Chart(feature_importance_df).mark_bar().encode(
         x=alt.X('Coefficient', title='Coefficient'),
         y=alt.Y('Feature', sort='-x', title='', axis=alt.Axis(labelLimit=400)),  # Adjust label width
-        color=alt.Color('Coefficient', scale=alt.Scale(scheme='blueorange'))
+        color=alt.Color('Coefficient', scale=alt.Scale(scheme='blueorange'), legend=None)
     ).properties(
         title='Feature Importance (Linear Regression Coefficients)',
         width=600  # Set the width of the chart
