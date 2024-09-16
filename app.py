@@ -66,7 +66,7 @@ def cross_section_analysis(data, num_combos):
 
 def prep_data(data):
     #Remove NAs
-    features = = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Amount Spent', 'Clicks all', 'Impressions']
+    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Amount Spent', 'Clicks all', 'Impressions']
     cleaned_data[features] = data[features].replace("", np.nan)
     cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
