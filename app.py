@@ -158,10 +158,10 @@ def linear_regression_analysis(data, var, combination_level):
     features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
     target = var
 
-    if target = "Clicks":
-            target == "Clicks all"
-    if target = "Spend":
-            target == "Amount Spent"
+    if target == "Clicks":
+            target = "Clicks all"
+    if target == "Spend":
+            target = "Amount Spent"
 
     # Separate the input features (X) and target variable (y)
     X = data[features]
