@@ -160,15 +160,9 @@ def linear_regression_analysis(data, var, combination_level):
     features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
     target = var
 
-    # Replace empty strings with NaN
-    data[features] = data[features].replace("", np.nan)
-
-    # Drop rows with any null values (NaN) in the selected features
-    data_clean = data.dropna(subset=features)
-
     # Separate the input features (X) and target variable (y)
-    X = data_clean[features]
-    y = data_clean[target]
+    X = data[features]
+    y = data[target]
 
     # One-Hot Encoding for categorical features
     X_encoded = pd.get_dummies(X[['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']], drop_first=True)
