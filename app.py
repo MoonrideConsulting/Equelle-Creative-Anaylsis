@@ -242,7 +242,7 @@ def main_dashboard():
     st.dataframe(cross_section_analysis(data, num_combos), use_container_width=True)
 
     st.header("ML Analysis")
-    st.write("This section shows the output from two different types of models looking at how different values of the 4 variables of interest impact the the target metric. To give context, feature importance plots reveal which values of said variables most impact outcomes like purchases. The plots show this for two different types of models. The left visual showing overall relevance in the model and the right showing degree of impact and direction. While these visuals help prioritize key factors, they don’t explain why factors matter or capture complex interactions. Any interepretation should be cautious but seeing where variables overlap is a good way to pick out trends... Can add functionality to look at combinations like above but doing so makes the models become more complex and the results more convoluted.")
+    st.write("This chart shows the output of a regression model looking at how combinations of the 4 variables of interest influenced the selected metric. A positive value (oarnge and to the right) would suggest that the combination positively impacted the outcome metric while a negative value would suggest the opposite.")
     cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
     model_data = prep_data(cleaned_data)
