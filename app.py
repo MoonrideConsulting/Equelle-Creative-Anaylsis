@@ -259,7 +259,7 @@ def main_dashboard():
     selected_metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks', 'Spend'])
 
     # Perform linear regression with interaction terms
-    feature_importance_df = linear_regression_analysis(data, selected_metric, num_combos)
+    feature_importance_df = linear_regression_analysis(model_data, selected_metric, num_combos)
 
     # Plot the resulting feature importance
     plot_linear_regression_coefficients(feature_importance_df)
