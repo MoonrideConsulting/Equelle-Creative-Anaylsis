@@ -241,12 +241,6 @@ def main_dashboard():
     cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
     model_data = prep_data(cleaned_data)
-
-    # Create a select box to choose the metric
-    metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks all', 'Amount Spent'])
-
-    # Streamlit logic for user interaction
-    combination_level = st.radio('Select Number of Variables in Combination:', [1, 2, 3, 4])
         
     #col1, col2 =  st.columns(2)    
     #with col1:       
@@ -260,7 +254,7 @@ def main_dashboard():
     selected_metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks', 'Spend'])
 
     # Perform linear regression with interaction terms
-    feature_importance_df = linear_regression_analysis(data, selected_metric, combination_level)
+    feature_importance_df = linear_regression_analysis(data, selected_metric, num_combos)
 
     # Plot the resulting feature importance
     plot_linear_regression_coefficients(feature_importance_df)
