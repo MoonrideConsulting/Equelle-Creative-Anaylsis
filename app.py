@@ -159,9 +159,9 @@ def linear_regression_analysis(data, var, combination_level):
     target = var
 
     if target = "Clicks":
-            target = "Clicks all"
+            target == "Clicks all"
     if target = "Spend":
-            target = "Amount Spent"
+            target == "Amount Spent"
 
     # Separate the input features (X) and target variable (y)
     X = data[features]
