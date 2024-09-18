@@ -11,18 +11,6 @@ from plotly.subplots import make_subplots
 from datetime import datetime, timedelta
 import re
 
-#For random forest modeling
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.preprocessing import StandardScaler
-import numpy as np
-
-#plotting
-import matplotlib.pyplot as plt
-import altair as alt
 
 def password_protection():
         main_dashboard()
