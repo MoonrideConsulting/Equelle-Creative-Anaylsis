@@ -1,8 +1,11 @@
 import streamlit as st
-import Cross_section
+import cross_section
 
 # Main function to control navigation
 def main_dashboard():
+
+    st.set_page_config(page_title="Equelle Creative Analysis",page_icon="🧑‍🚀",layout="wide")
+    
     # Set up navigation for different pages (using radio buttons for tabs)
     page = st.radio("Select a page", ["Cross Section Analysis", "Ranked Combinations"], index = 0)
 
