@@ -9,6 +9,7 @@ from google.oauth2 import service_account
 from google.cloud import bigquery
 from plotly.subplots import make_subplots
 from datetime import datetime, timedelta
+import re
 
 #For random forest modeling
 from sklearn.ensemble import RandomForestRegressor
