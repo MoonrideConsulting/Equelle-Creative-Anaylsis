@@ -17,7 +17,7 @@ def main_dashboard():
     
     elif page == "Ranked Combinations":
         st.markdown("<h2 style='text-align: center;'>Ranked Combinations</h2>", unsafe_allow_html=True)
-        ranked_combos.password_protection()
+        ranked_combos.main()
 
 # Run the dashboard
 if __name__ == "__main__":
