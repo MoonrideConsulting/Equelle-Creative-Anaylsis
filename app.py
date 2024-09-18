@@ -292,14 +292,14 @@ def main_dashboard():
     # Filter the data based on Batch and Date before creating the combination table
     filtered_data = filter_data(data, selected_batch, start_date, end_date)
 
-    # Control for the number of combinations
-    num_combos = st.number_input("Change number of combinations", 2, min_value=2, max_value=4)
-
     # Define available columns for selection
     available_columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
 
     # Let the user select which variables to include in the analysis
     selected_columns = st.multiselect('Select Variables to Include in Analysis:', available_columns, default=available_columns)
+
+    # Control for the number of combinations
+    num_combos = len(selected_columns)
 
     # Cross Sectional Analysis
     st.header("Cross Sectional Analysis")
