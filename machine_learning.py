@@ -27,72 +27,6 @@ import altair as alt
 def password_protection():
         main_dashboard()
 
-# Function to extract the Batch information from Ad Name
-def extract_batch(ad_name):
-    match = re.search(r'Batch.*', ad_name)
-    return match.group(0) if match else 'No Batch'
-
-# Function to generate interaction terms
-def generate_interaction_terms(X_encoded, level):
-    if level == 1:  # No interaction terms
-        return X_encoded  # This case should only be used if you want individual features (we'll focus on combinations)
-    else:
-        # Create polynomial features for interaction terms
-        poly = PolynomialFeatures(degree=level, interaction_only=True, include_bias=False)
-        X_interactions = poly.fit_transform(X_encoded)
-        
-        # Get feature names for the interaction terms
-        interaction_feature_names = poly.get_feature_names_out(X_encoded.columns)
-        
-        # Return the DataFrame with interaction terms (no individual features)
-        return pd.DataFrame(X_interactions, columns=interaction_feature_names)
-
-# Function to filter data before creating the combo table
-def filter_data(data, selected_batch, start_date, end_date):
-    # Apply the Batch filter
-    if selected_batch != "All":
-        data = data[data['Batch'] == selected_batch]
-    
-    # Apply the Date filter only if both start and end dates are selected
-    if start_date and end_date:
-        data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
-    
-    return data
-
-def cross_section_analysis(data, num_combos, selected_columns):
-    # Generate all combinations of the specified number of columns from user-selected columns
-    combinations = list(itertools.combinations(selected_columns, num_combos))
-
-    # Create an empty dataframe to store all results
-    combined_results = pd.DataFrame()
-
-    # Loop through each combination of columns and filter rows that match the combination
-    for combo in combinations:
-        # Group by the combination of columns and aggregate required metrics
-        grouped = data.groupby(list(combo)).agg({
-            'Amount Spent': 'sum',
-            'Clicks all': 'sum',
-            'Impressions': 'sum',
-            'Purchases': 'sum'
-        }).reset_index()
-
-        # Calculate additional metrics
-        grouped['CPM'] = round((grouped['Amount Spent'] / grouped['Impressions']) * 1000, 2)
-        grouped['CPA'] = round(grouped['Amount Spent'] / grouped['Purchases'], 2)
-        grouped['CPC'] = round(grouped['Amount Spent'] / grouped['Clicks all'], 2)
-        grouped['Amount Spent'] = round(grouped['Amount Spent'], 0)
-
-        # Combine the values in the columns to create a 'Combination' identifier
-        grouped['Combination'] = grouped.apply(lambda row: ', '.join([f"{col}={row[col]}" for col in combo]), axis=1)
-
-        # Append the results to the combined dataframe
-        combined_results = pd.concat([combined_results, grouped[['Combination', 'Purchases', 'Amount Spent', 'Clicks all', 'Impressions', 'CPM', 'CPA', 'CPC']]])
-
-    # Sort the results by Purchases in descending order
-    combined_results = combined_results.sort_values(by='Purchases', ascending=False)
-
-    return combined_results
-
 def prep_data(data):
     #Remove NAs
     features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Amount Spent', 'Clicks all', 'Impressions']
@@ -166,21 +100,6 @@ def streamlit_feature_importance_bar_chart(feature_importance_df):
 
     # Display the chart in Streamlit
     st.altair_chart(chart, use_container_width=True)
-
-# Function to generate interaction terms
-def generate_interaction_terms(X_encoded, level):
-    if level == 1:  # No interaction terms
-        return X_encoded  # This case should only be used if you want individual features (we'll focus on combinations)
-    else:
-        # Create polynomial features for interaction terms
-        poly = PolynomialFeatures(degree=level, interaction_only=True, include_bias=False)
-        X_interactions = poly.fit_transform(X_encoded)
-        
-        # Get feature names for the interaction terms
-        interaction_feature_names = poly.get_feature_names_out(X_encoded.columns)
-        
-        # Return the DataFrame with interaction terms (no individual features)
-        return pd.DataFrame(X_interactions, columns=interaction_feature_names)
 
 # Main linear regression analysis function with handling of empty strings and combinations
 def linear_regression_analysis(data, var, combination_level):
@@ -261,93 +180,25 @@ def main_dashboard():
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
 
-    # Step 1: Create a new "Batch" column from "Ad Name"
-    data['Batch'] = data['Ad Name'].apply(extract_batch)
-
-    # Step 2: Create columns for side-by-side layout
-    col1, col2 = st.columns(2)
-
-    # Step 3: Batch and Date filters inside columns
-    with col1:
-        # Add a Batch filter
-        batch_options = ["All"] + sorted(data['Batch'].unique())
-        selected_batch = st.selectbox('Select Batch:', batch_options, index=0)
-
-    with col2:
-        # Add a Date range filter
-        min_date = data['Date'].min()
-        max_date = data['Date'].max()
-        
-        # Initialize the date range to None to avoid errors
-        date_range = st.date_input(
-            "Select Date Range",
-            [min_date, max_date],
-            min_value=min_date,
-            max_value=max_date,
-            key='date_range'
-        )
-
-        # Ensure both start_date and end_date are selected
-        if len(date_range) == 2:
-            start_date, end_date = date_range
-        else:
-            start_date, end_date = min_date, max_date  # Default to full date range if not fully selected
-
-    # Filter the data based on Batch and Date before creating the combination table
-    filtered_data = filter_data(data, selected_batch, start_date, end_date)
-
-    # Define available columns for selection
-    available_columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
-
-    # Let the user select which variables to include in the analysis, with default set to Messaging and Creative Theme
-    selected_columns = st.multiselect(
-        'Select Variables to Include in Analysis:',
-        available_columns,  # Full list of options
-        default=['Messaging Theme', 'Creative Theme']  # Default selection
-    )
-
-    # Control for the number of combinations
-    num_combos = len(selected_columns)
-
-    # Cross Sectional Analysis
-    # Generate the combo table
-    combo_table = cross_section_analysis(filtered_data, num_combos, selected_columns)
-
-    # Step 5: Add Min/Max input boxes for Spend filtering
-    st.write("Filter by Spend")
-    spend_min = combo_table['Amount Spent'].min()
-    spend_max = combo_table['Amount Spent'].max()
-
-    # Create two input boxes for min and max spend with default values set to the min/max of the table
-    min_spend = st.number_input("Min Spend", min_value=0, value=int(spend_min))
-    max_spend = st.number_input("Max Spend", min_value=0, value=int(spend_max))
-
-    # Apply the Spend Filter to the combo table (after the table is generated)
-    combo_table = combo_table[(combo_table['Amount Spent'] >= min_spend) & (combo_table['Amount Spent'] <= max_spend)]
-
-    # Display the filtered combo table
-    st.dataframe(combo_table, use_container_width=True)
-
     # ML Analysis Section (we can leave this for now, but adding filter flexibility)
     cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
     model_data = prep_data(cleaned_data)
         
-    #col1, col2 =  st.columns(2)    
-    #with col1:       
-        #random forest analysis
-        #feature_importance_df = feature_importance_analysis(model_data, metric)
-        #streamlit_feature_importance_bar_chart(feature_importance_df)
+    col1, col2 =  st.columns(2)    
+    with col1:       
+        random forest analysis
+        feature_importance_df = feature_importance_analysis(model_data, metric)
+        streamlit_feature_importance_bar_chart(feature_importance_df)
 
-    #with col2: 
+    with col2: 
+        # Run the linear regression analysis based on user selection and selected metric (e.g., Purchases)
+        selected_metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks', 'Spend'])
 
-    # Run the linear regression analysis based on user selection and selected metric (e.g., Purchases)
-    #selected_metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks', 'Spend'])
+        # Perform linear regression with interaction terms
+        feature_importance_df = linear_regression_analysis(model_data, selected_metric, num_combos)
 
-    # Perform linear regression with interaction terms
-    #feature_importance_df = linear_regression_analysis(model_data, selected_metric, num_combos)
-
-    # Plot the resulting feature importance
-    #plot_linear_regression_coefficients(feature_importance_df)
+        # Plot the resulting feature importance
+        plot_linear_regression_coefficients(feature_importance_df)
 
 password_protection()
