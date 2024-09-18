@@ -1,6 +1,7 @@
 import streamlit as st
 import cross_section
 import ranked_combos
+import machine_learning
 
 # Main function to control navigation
 def main_dashboard():
