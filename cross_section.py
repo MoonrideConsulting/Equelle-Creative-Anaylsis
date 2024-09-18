@@ -244,8 +244,6 @@ def plot_linear_regression_coefficients(feature_importance_df):
     st.altair_chart(chart, use_container_width=True)
 
 def main_dashboard():
-    st.markdown("<h1 style='text-align: center;'>Equelle Creative Analysis</h1>", unsafe_allow_html=True)
-
     # Load data if not already in session state
     if 'full_data' not in st.session_state:
         credentials = service_account.Credentials.from_service_account_info(
@@ -312,9 +310,6 @@ def main_dashboard():
     num_combos = len(selected_columns)
 
     # Cross Sectional Analysis
-    st.header("Cross Sectional Analysis")
-    st.write("This chart allows you to see metrics across combinations of the selected variables. By default, it is sorted by the number of purchases but can be sorted by other columns by clicking on them. Adjust the number of variables in the combination by changing the selector below.")
-
     # Generate the combo table
     combo_table = cross_section_analysis(filtered_data, num_combos, selected_columns)
 
