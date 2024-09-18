@@ -1,5 +1,6 @@
 import streamlit as st
 import cross_section
+import ranked_combos
 
 # Main function to control navigation
 def main_dashboard():
@@ -16,8 +17,7 @@ def main_dashboard():
     
     elif page == "Ranked Combinations":
         st.markdown("<h2 style='text-align: center;'>Ranked Combinations</h2>", unsafe_allow_html=True)
-        st.write("This is the overview page where you can provide general insights, summaries, or other key metrics.")
-        st.write("Add charts or summaries here...")
+        ranked_combos.password_protection()
 
 # Run the dashboard
 if __name__ == "__main__":
