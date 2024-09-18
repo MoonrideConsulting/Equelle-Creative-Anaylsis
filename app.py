@@ -29,6 +29,38 @@ st.set_page_config(page_title="Equelle Creative Analysis",page_icon="🧑‍🚀
 def password_protection():
         main_dashboard()
 
+# Function to extract the Batch information from Ad Name
+def extract_batch(ad_name):
+    match = re.search(r'Batch.*', ad_name)
+    return match.group(0) if match else 'No Batch'
+
+# Function to generate interaction terms
+def generate_interaction_terms(X_encoded, level):
+    if level == 1:  # No interaction terms
+        return X_encoded  # This case should only be used if you want individual features (we'll focus on combinations)
+    else:
+        # Create polynomial features for interaction terms
+        poly = PolynomialFeatures(degree=level, interaction_only=True, include_bias=False)
+        X_interactions = poly.fit_transform(X_encoded)
+        
+        # Get feature names for the interaction terms
+        interaction_feature_names = poly.get_feature_names_out(X_encoded.columns)
+        
+        # Return the DataFrame with interaction terms (no individual features)
+        return pd.DataFrame(X_interactions, columns=interaction_feature_names)
+
+# Function to filter data before creating the combo table
+def filter_data(data, selected_batch, date_range):
+    # Apply the Batch filter
+    if selected_batch != "All":
+        data = data[data['Batch'] == selected_batch]
+    
+    # Apply the Date filter
+    start_date, end_date = date_range
+    data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
+    
+    return data
+
 def cross_section_analysis(data, num_combos, selected_columns):
     # Generate all combinations of the specified number of columns from user-selected columns
     combinations = list(itertools.combinations(selected_columns, num_combos))
@@ -233,19 +265,34 @@ def main_dashboard():
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
 
+    # Step 1: Create a new "Batch" column from "Ad Name"
+    data['Batch'] = data['Ad Name'].apply(extract_batch)
+
     # Define available columns for selection
     available_columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
 
     # Let the user select which variables to include in the analysis
     selected_columns = st.multiselect('Select Variables to Include in Analysis:', available_columns, default=available_columns)
 
+    # Step 2: Add a Batch filter
+    batch_options = ["All"] + sorted(data['Batch'].unique())
+    selected_batch = st.selectbox('Select Batch:', batch_options, index=0)
+
+    # Step 3: Add a Date range filter
+    min_date = data['Date'].min()
+    max_date = data['Date'].max()
+    date_range = st.date_input("Select Date Range", [min_date, max_date], min_value=min_date, max_value=max_date)
+
+    # Filter the data based on Batch and Date before creating the combination table
+    filtered_data = filter_data(data, selected_batch, date_range)
+
     # Control for the number of combinations
-    num_combos = len(selected_columns)
+    num_combos = st.number_input("Change number of combinations", 2, min_value=2, max_value=len(selected_columns))
 
     # Cross Sectional Analysis
     st.header("Cross Sectional Analysis")
     st.write("This chart allows you to see metrics across combinations of the selected variables. By default, it is sorted by the number of purchases but can be sorted by other columns by clicking on them. Adjust the number of variables in the combination by changing the selector below.")
-    st.dataframe(cross_section_analysis(data, num_combos, selected_columns), use_container_width=True)
+    st.dataframe(cross_section_analysis(filtered_data, num_combos, selected_columns), use_container_width=True)
 
     # ML Analysis Section (we can leave this for now, but adding filter flexibility)
     st.header("ML Analysis")
