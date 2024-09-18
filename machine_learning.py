@@ -24,9 +24,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import altair as alt
 
-def password_protection():
-        main_dashboard()
-
 def prep_data(data):
     #Remove NAs
     features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Amount Spent', 'Clicks all', 'Impressions']
@@ -162,7 +159,7 @@ def plot_linear_regression_coefficients(feature_importance_df):
     # Display the chart in Streamlit
     st.altair_chart(chart, use_container_width=True)
 
-def main_dashboard():
+def main():
     # Load data if not already in session state
     if 'full_data' not in st.session_state:
         credentials = service_account.Credentials.from_service_account_info(
@@ -201,4 +198,3 @@ def main_dashboard():
         # Plot the resulting feature importance
         plot_linear_regression_coefficients(feature_importance_df)
 
-password_protection()
