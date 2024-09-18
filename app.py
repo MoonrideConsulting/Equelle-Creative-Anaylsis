@@ -281,13 +281,21 @@ def main_dashboard():
         # Add a Date range filter
         min_date = data['Date'].min()
         max_date = data['Date'].max()
-        start_date, end_date = st.date_input(
+        
+        # Initialize the date range to None to avoid errors
+        date_range = st.date_input(
             "Select Date Range",
-            [None, None],
+            [min_date, max_date],
             min_value=min_date,
             max_value=max_date,
             key='date_range'
         )
+
+        # Ensure both start_date and end_date are selected
+        if len(date_range) == 2:
+            start_date, end_date = date_range
+        else:
+            start_date, end_date = min_date, max_date  # Default to full date range if not fully selected
 
     # Filter the data based on Batch and Date before creating the combination table
     filtered_data = filter_data(data, selected_batch, start_date, end_date)
