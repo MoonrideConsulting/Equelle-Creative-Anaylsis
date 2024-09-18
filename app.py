@@ -11,7 +11,7 @@ def main_dashboard():
 
     if page == "Cross Section Analysis":
         st.markdown("<h1 style='text-align: center;'>Cross Section Analysis</h1>", unsafe_allow_html=True)
-        Cross_section.password_protection()  # Call the main() function from cross_section_analysis.py
+        cross_section.password_protection()  # Call the main() function from cross_section_analysis.py
     
     elif page == "Ranked Combinations":
         st.markdown("<h1 style='text-align: center;'>Overview</h1>", unsafe_allow_html=True)
