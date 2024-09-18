@@ -287,7 +287,7 @@ def main_dashboard():
     filtered_data = filter_data(data, selected_batch, date_range)
 
     # Control for the number of combinations
-    num_combos = st.number_input("Change number of combinations", 2, min_value=2, max_value=len(selected_columns))
+    num_combos = len(selected_columns)
 
     # Cross Sectional Analysis
     st.header("Cross Sectional Analysis")
