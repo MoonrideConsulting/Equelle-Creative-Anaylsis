@@ -24,8 +24,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import altair as alt
 
-st.set_page_config(page_title="Equelle Creative Analysis",page_icon="🧑‍🚀",layout="wide")
-
 def password_protection():
         main_dashboard()
 
