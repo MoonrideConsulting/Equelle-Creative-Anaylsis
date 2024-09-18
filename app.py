@@ -15,7 +15,7 @@ def main_dashboard():
         cross_section.password_protection()  # Call the main() function from cross_section_analysis.py
     
     elif page == "Ranked Combinations":
-        st.markdown("<h2 style='text-align: right;'>Ranked Combinations</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>Ranked Combinations</h2>", unsafe_allow_html=True)
         st.write("This is the overview page where you can provide general insights, summaries, or other key metrics.")
         st.write("Add charts or summaries here...")
 
