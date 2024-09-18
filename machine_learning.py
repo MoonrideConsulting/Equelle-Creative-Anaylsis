@@ -181,6 +181,8 @@ def main():
     cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
     model_data = prep_data(cleaned_data)
+
+    metric = "Purchases"
         
     col1, col2 =  st.columns(2)    
     with col1:       
