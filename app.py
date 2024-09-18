@@ -4,7 +4,7 @@ import Cross_section
 # Main function to control navigation
 def main_dashboard():
     # Set up navigation for different pages (using radio buttons for tabs)
-    page = st.radio("Select a page", ["Cross Section Analysis", "Ranked Combinations"], default=["Cross Section Analysis"])
+    page = st.radio("Select a page", ["Cross Section Analysis", "Ranked Combinations"], index = 0)
 
     if page == "Cross Section Analysis":
         st.markdown("<h1 style='text-align: center;'>Cross Section Analysis</h1>", unsafe_allow_html=True)
