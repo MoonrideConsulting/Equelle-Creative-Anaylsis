@@ -329,8 +329,6 @@ def main_dashboard():
     st.dataframe(combo_table, use_container_width=True)
 
     # ML Analysis Section (we can leave this for now, but adding filter flexibility)
-    st.header("ML Analysis")
-    st.write("This chart shows the output of a regression model looking at how combinations of the selected variables influenced the chosen metric.")
     cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
     model_data = prep_data(cleaned_data)
