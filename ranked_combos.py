@@ -65,34 +65,3 @@ def main():
         selected_combo = st.selectbox(f"Select combination for {theme_value}:", filtered_combos['Messaging Theme'], key=f"combo_{theme_value}_2")
         combo_info = filtered_combos[filtered_combos['Messaging Theme'] == selected_combo]
         st.write(f"Selected Combination: {theme_value} and {selected_combo} - Purchases: {combo_info['Purchases'].values[0]}")
-Key Features:
-Rankings for Messaging and Creative Themes:
-
-The function rank_by_purchases() ranks the values of Messaging Theme and Creative Theme based on total purchases.
-Dropdowns for Combination Rankings:
-
-For each value of the ranked theme (e.g., Messaging Theme or Creative Theme), we add a dropdown that lets the user select combinations with the other theme (e.g., combinations of Messaging Theme with Creative Theme).
-This is done using rank_combinations(), which ranks combinations of the two variables by purchases.
-Dropdowns with Ranking Information:
-
-When a user selects a combination (e.g., a Messaging Theme with a Creative Theme), the app shows the number of purchases for that combination.
-Integration with Main App:
-In your main.py, you can add a new page that calls this Ranked Combos page:
-
-python
-Copy code
-import streamlit as st
-import Cross_section
-import ranked_combos
-
-# Main function to control navigation
-def main_dashboard():
-    # Set up navigation for different pages (using radio buttons for tabs)
-    page = st.radio("Select a page", ["Cross Section Analysis", "Ranked Combos"], index=0)
-
-    if page == "Cross Section Analysis":
-        st.markdown("<h1 style='text-align: center;'>Cross Section Analysis</h1>", unsafe_allow_html=True)
-        Cross_section.password_protection()
-
-    elif page == "Ranked Combos":
-        ranked_combos.main()  # Call the Ranked Combos page
