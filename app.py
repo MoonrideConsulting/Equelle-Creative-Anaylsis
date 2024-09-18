@@ -268,26 +268,38 @@ def main_dashboard():
     # Step 1: Create a new "Batch" column from "Ad Name"
     data['Batch'] = data['Ad Name'].apply(extract_batch)
 
+    # Step 2: Create columns for side-by-side layout
+    col1, col2 = st.columns(2)
+
+    # Step 3: Batch and Date filters inside columns
+    with col1:
+        # Add a Batch filter
+        batch_options = ["All"] + sorted(data['Batch'].unique())
+        selected_batch = st.selectbox('Select Batch:', batch_options, index=0)
+
+    with col2:
+        # Add a Date range filter
+        min_date = data['Date'].min()
+        max_date = data['Date'].max()
+        start_date, end_date = st.date_input(
+            "Select Date Range",
+            [None, None],
+            min_value=min_date,
+            max_value=max_date,
+            key='date_range'
+        )
+
+    # Filter the data based on Batch and Date before creating the combination table
+    filtered_data = filter_data(data, selected_batch, start_date, end_date)
+
+    # Control for the number of combinations
+    num_combos = st.number_input("Change number of combinations", 2, min_value=2, max_value=4)
+
     # Define available columns for selection
     available_columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
 
     # Let the user select which variables to include in the analysis
     selected_columns = st.multiselect('Select Variables to Include in Analysis:', available_columns, default=available_columns)
-
-    # Step 2: Add a Batch filter
-    batch_options = ["All"] + sorted(data['Batch'].unique())
-    selected_batch = st.selectbox('Select Batch:', batch_options, index=0)
-
-    # Step 3: Add a Date range filter
-    min_date = data['Date'].min()
-    max_date = data['Date'].max()
-    date_range = st.date_input("Select Date Range", [min_date, max_date], min_value=min_date, max_value=max_date)
-
-    # Filter the data based on Batch and Date before creating the combination table
-    filtered_data = filter_data(data, selected_batch, date_range)
-
-    # Control for the number of combinations
-    num_combos = len(selected_columns)
 
     # Cross Sectional Analysis
     st.header("Cross Sectional Analysis")
