@@ -312,26 +312,25 @@ def main_dashboard():
     # Cross Sectional Analysis
     st.header("Cross Sectional Analysis")
     st.write("This chart allows you to see metrics across combinations of the selected variables. By default, it is sorted by the number of purchases but can be sorted by other columns by clicking on them. Adjust the number of variables in the combination by changing the selector below.")
+
     # Generate the combo table
     combo_table = cross_section_analysis(filtered_data, num_combos, selected_columns)
 
-    # Step 5: Add a Spend Slider (for the combo table)
+    # Step 5: Add Min/Max input boxes for Spend filtering
     st.write("Filter by Spend")
     spend_min = combo_table['Amount Spent'].min()
     spend_max = combo_table['Amount Spent'].max()
 
-    spend_range = st.slider(
-        "Select Spend Range", 
-        min_value=int(spend_min), 
-        max_value=int(spend_max), 
-        value=(int(spend_min), int(spend_max))
-    )
+    # Create two input boxes for min and max spend with default values set to the min/max of the table
+    min_spend = st.number_input("Min Spend", min_value=0, value=int(spend_min))
+    max_spend = st.number_input("Max Spend", min_value=0, value=int(spend_max))
 
     # Apply the Spend Filter to the combo table (after the table is generated)
-    combo_table = combo_table[(combo_table['Amount Spent'] >= spend_range[0]) & (combo_table['Amount Spent'] <= spend_range[1])]
+    combo_table = combo_table[(combo_table['Amount Spent'] >= min_spend) & (combo_table['Amount Spent'] <= max_spend)]
 
     # Display the filtered combo table
     st.dataframe(combo_table, use_container_width=True)
+
     # ML Analysis Section (we can leave this for now, but adding filter flexibility)
     st.header("ML Analysis")
     st.write("This chart shows the output of a regression model looking at how combinations of the selected variables influenced the chosen metric.")
