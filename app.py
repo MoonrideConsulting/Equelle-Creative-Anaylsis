@@ -55,9 +55,9 @@ def filter_data(data, selected_batch, date_range):
     if selected_batch != "All":
         data = data[data['Batch'] == selected_batch]
     
-    # Apply the Date filter
-    start_date, end_date = date_range
-    data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
+    # Apply the Date filter only if both start and end dates are selected
+    if start_date and end_date:
+        data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
     
     return data
 
