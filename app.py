@@ -50,7 +50,7 @@ def generate_interaction_terms(X_encoded, level):
         return pd.DataFrame(X_interactions, columns=interaction_feature_names)
 
 # Function to filter data before creating the combo table
-def filter_data(data, selected_batch, date_range):
+def filter_data(data, selected_batch, start_date, end_date):
     # Apply the Batch filter
     if selected_batch != "All":
         data = data[data['Batch'] == selected_batch]
