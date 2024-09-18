@@ -303,8 +303,12 @@ def main_dashboard():
     # Define available columns for selection
     available_columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
 
-    # Let the user select which variables to include in the analysis
-    selected_columns = st.multiselect('Select Variables to Include in Analysis:', available_columns, default=available_columns)
+    # Let the user select which variables to include in the analysis, with default set to Messaging and Creative Theme
+    selected_columns = st.multiselect(
+        'Select Variables to Include in Analysis:',
+        available_columns,  # Full list of options
+        default=['Messaging Theme', 'Creative Theme']  # Default selection
+    )
 
     # Control for the number of combinations
     num_combos = len(selected_columns)
