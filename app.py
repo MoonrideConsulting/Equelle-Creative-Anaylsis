@@ -10,11 +10,11 @@ def main_dashboard():
     page = st.radio("Select a page", ["Cross Section Analysis", "Ranked Combinations"], index = 0)
 
     if page == "Cross Section Analysis":
-        st.markdown("<h1 style='text-align: center;'>Cross Section Analysis</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: right;'>Cross Section Analysis</h1>", unsafe_allow_html=True)
         cross_section.password_protection()  # Call the main() function from cross_section_analysis.py
     
     elif page == "Ranked Combinations":
-        st.markdown("<h1 style='text-align: center;'>Overview</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: right;'>Ranked Combinations</h1>", unsafe_allow_html=True)
         st.write("This is the overview page where you can provide general insights, summaries, or other key metrics.")
         st.write("Add charts or summaries here...")
 
