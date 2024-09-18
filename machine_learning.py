@@ -184,7 +184,7 @@ def main():
         
     col1, col2 =  st.columns(2)    
     with col1:       
-        random forest analysis
+        #random forest analysis
         feature_importance_df = feature_importance_analysis(model_data, metric)
         streamlit_feature_importance_bar_chart(feature_importance_df)
 
