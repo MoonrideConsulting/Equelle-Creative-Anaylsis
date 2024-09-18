@@ -239,7 +239,7 @@ def main_dashboard():
     selected_columns = st.multiselect('Select Variables to Include in Analysis:', available_columns, default=available_columns)
 
     # Control for the number of combinations
-    num_combos = st.number_input("Change number of combinations", 2, min_value=2, max_value=len(selected_columns))
+    num_combos = st.number_input("Change number of combinations", 2, len(selected_columns))
 
     # Cross Sectional Analysis
     st.header("Cross Sectional Analysis")
