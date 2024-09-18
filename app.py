@@ -13,7 +13,7 @@ def main_dashboard():
 
     elif page == "Cross Section Analysis":
         st.markdown("<h1 style='text-align: center;'>Cross Section Analysis</h1>", unsafe_allow_html=True)
-        cross_section_analysis.password_protection()  # Call the main() function from cross_section_analysis.py
+        Cross_section.password_protection()  # Call the main() function from cross_section_analysis.py
 
 # Run the dashboard
 if __name__ == "__main__":
