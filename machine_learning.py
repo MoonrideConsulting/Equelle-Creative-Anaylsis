@@ -183,6 +183,7 @@ def main():
     model_data = prep_data(cleaned_data)
 
     metric = "Purchases"
+    num_combos = 2
         
     col1, col2 =  st.columns(2)    
     with col1:       
