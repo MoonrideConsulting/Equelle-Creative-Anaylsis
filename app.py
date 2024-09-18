@@ -28,12 +28,9 @@ st.set_page_config(page_title="Equelle Creative Analysis",page_icon="🧑‍🚀
 def password_protection():
         main_dashboard()
 
-def cross_section_analysis(data, num_combos):
-    # Columns to be used for combinations
-    columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
-
-    # Generate all combinations of the specified number of columns
-    combinations = list(itertools.combinations(columns, num_combos))
+def cross_section_analysis(data, num_combos, selected_columns):
+    # Generate all combinations of the specified number of columns from user-selected columns
+    combinations = list(itertools.combinations(selected_columns, num_combos))
 
     # Create an empty dataframe to store all results
     combined_results = pd.DataFrame()
@@ -217,34 +214,41 @@ def plot_linear_regression_coefficients(feature_importance_df):
 
 def main_dashboard():
     st.markdown("<h1 style='text-align: center;'>Equelle Creative Analysis</h1>", unsafe_allow_html=True)
-    # Calculate the date one year ago from today
-    one_year_ago = (datetime.now() - timedelta(days=365)).date()
-    
+
+    # Load data if not already in session state
     if 'full_data' not in st.session_state:
         credentials = service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"]
         )
         client = bigquery.Client(credentials=credentials)
-        # Modify the query
         query = f"""
         SELECT *
         FROM `Equelle_Segments.equelle_ad_level_all`
         WHERE DATE(Date) > "2024-01-01";"""
         st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
 
-    # Rename Cols / Clean Up Df
+    # Data preparation
     data = st.session_state.full_data
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
 
-    num_combos = st.number_input("Change number of combinations", 2, 4)
+    # Define available columns for selection
+    available_columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
 
+    # Let the user select which variables to include in the analysis
+    selected_columns = st.multiselect('Select Variables to Include in Analysis:', available_columns, default=available_columns)
+
+    # Control for the number of combinations
+    num_combos = st.number_input("Change number of combinations", 2, min_value=2, max_value=len(selected_columns))
+
+    # Cross Sectional Analysis
     st.header("Cross Sectional Analysis")
-    st.write("This chart allows you to see metrics across combinations of the 4 variables of interest (Ad Format, Messaging Theme, Creative Theme, and Landing Page Type). By default it is sorted by the number of purchases but can be sorted by other columns by clicking on them (once for desc, twice for asc). You can change the number of variables in the combination by editing the number selecter below.")
-    st.dataframe(cross_section_analysis(data, num_combos), use_container_width=True)
+    st.write("This chart allows you to see metrics across combinations of the selected variables. By default, it is sorted by the number of purchases but can be sorted by other columns by clicking on them. Adjust the number of variables in the combination by changing the selector below.")
+    st.dataframe(cross_section_analysis(data, num_combos, selected_columns), use_container_width=True)
 
+    # ML Analysis Section (we can leave this for now, but adding filter flexibility)
     st.header("ML Analysis")
-    st.write("This chart shows the output of a regression model looking at how combinations of the 4 variables of interest influenced the selected metric. A positive value (oarnge and to the right) would suggest that the combination positively impacted the outcome metric while a negative value would suggest the opposite.")
+    st.write("This chart shows the output of a regression model looking at how combinations of the selected variables influenced the chosen metric.")
     cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
     model_data = prep_data(cleaned_data)
