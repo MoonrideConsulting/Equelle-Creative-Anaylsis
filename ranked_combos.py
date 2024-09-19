@@ -31,8 +31,6 @@ def rank_combinations(data, main_column, secondary_column):
 
 # Main function to display ranked combos
 def main():
-    st.markdown("<h1 style='text-align: center;'>Ranked Combos</h1>", unsafe_allow_html=True)
-
     # Load the data from session state (assuming it's already loaded)
     data = st.session_state.full_data
     
