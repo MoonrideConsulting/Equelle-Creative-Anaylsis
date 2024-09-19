@@ -208,9 +208,6 @@ def main():
         streamlit_feature_importance_bar_chart(feature_importance_df)
 
     with col2: 
-        # Run the linear regression analysis based on user selection and selected metric (e.g., Purchases)
-        selected_metric = st.selectbox('Select a Metric', ['Purchases', 'Clicks', 'Spend'])
-
         # Perform linear regression with interaction terms
         feature_importance_df = linear_regression_analysis(model_data, selected_metric, num_combos)
 
