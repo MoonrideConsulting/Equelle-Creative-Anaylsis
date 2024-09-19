@@ -4,23 +4,6 @@ import ranked_combos
 import combo_breakdown
 import machine_learning
 
-# Password protection function
-def password_protection():
-    # Set a simple password (this can be stored securely elsewhere)
-    password = "letsgetcreative"
-
-    # Create a password input field in Streamlit
-    entered_password = st.text_input("Enter the password:", type="password")
-
-    # Check if the entered password is correct
-    if entered_password == password:
-        return True
-    else:
-        if entered_password:
-            st.error("Incorrect password. Please try again.")
-        return False
-
-
 # Main function to control navigation
 def main_dashboard():
 
@@ -52,5 +35,4 @@ def main_dashboard():
 
 # Run the app with password protection
 if __name__ == "__main__":
-    if password_protection():
-        main_dashboard()  # Call the main dashboard if the password is correct
+    main_dashboard()  # Call the main dashboard if the password is correct
