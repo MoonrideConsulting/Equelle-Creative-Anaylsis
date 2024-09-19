@@ -99,7 +99,7 @@ def main_dashboard():
         query = f"""
         SELECT *
         FROM `Equelle_Segments.equelle_ad_level_all`
-        WHERE DATE(Date) > "2024-01-01";"""
+        WHERE DATE(Date) >= "2024-01-01";"""
         st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
 
     # Data preparation
