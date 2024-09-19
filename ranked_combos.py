@@ -43,8 +43,6 @@ def filter_data(data, selected_batch, start_date, end_date):
 
 # Main function to display ranked combos with filters
 def main():
-    st.markdown("<h1 style='text-align: center;'>Ranked Combos</h1>", unsafe_allow_html=True)
-
     # Load the data from session state (assuming it's already loaded)
     data = st.session_state.full_data
     
