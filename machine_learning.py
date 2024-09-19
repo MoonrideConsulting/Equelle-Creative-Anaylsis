@@ -47,6 +47,22 @@ def prep_data(data):
         
     return model_data
 
+# Function to generate interaction terms
+def generate_interaction_terms(X_encoded, level):
+    if level == 1:  # No interaction terms
+        return X_encoded  # This case should only be used if you want individual features (we'll focus on combinations)
+    else:
+        # Create polynomial features for interaction terms
+        poly = PolynomialFeatures(degree=level, interaction_only=True, include_bias=False)
+        X_interactions = poly.fit_transform(X_encoded)
+        
+        # Get feature names for the interaction terms
+        interaction_feature_names = poly.get_feature_names_out(X_encoded.columns)
+        
+        # Return the DataFrame with interaction terms (no individual features)
+        return pd.DataFrame(X_interactions, columns=interaction_feature_names)
+
+
 # Function to prepare data and train a Random Forest model
 def feature_importance_analysis(data, var):
     # Select relevant columns
