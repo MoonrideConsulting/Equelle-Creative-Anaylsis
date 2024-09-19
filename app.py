@@ -16,7 +16,7 @@ def main_dashboard():
     # Set page header and layout
     st.markdown("<h1 style='text-align: center;'>Equelle Creative Analysis Dashboard</h1>", unsafe_allow_html=True)
 
-     if page == "Cross Section Analysis":
+    if page == "Cross Section Analysis":
         st.markdown("<h2 style='text-align: center;'>Cross Section Analysis</h2>", unsafe_allow_html=True)
         cross_section.password_protection()  # Call the main() function from cross_section_analysis.py
     
