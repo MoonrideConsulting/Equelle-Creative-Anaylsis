@@ -10,7 +10,7 @@ def main_dashboard():
 
     st.markdown("<h1 style='text-align: center;'>Equelle Creative Analysis</h1>", unsafe_allow_html=True)
     # Set up navigation for different pages (using radio buttons for tabs)
-    page = st.radio("Select a page", ["Cross Section Analysis", "Ranked Combinations", "Machine Learning Analyis"], index = 0)
+    page = st.radio("Select a page", ["Cross Section Analysis", "Ranked Combinations", "Machine Learning Analysis"], index = 0)
 
     if page == "Cross Section Analysis":
         st.markdown("<h2 style='text-align: center;'>Cross Section Analysis</h2>", unsafe_allow_html=True)
