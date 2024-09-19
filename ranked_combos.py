@@ -9,7 +9,7 @@ def rank_by_purchases(data, column):
 
     return ranking
 
-# Function to get combination rankings for each value of the variable
+# Function to get combination rankings for each value of the variable, with CPA, CPC, and CPM
 def rank_combinations(data, main_column, secondary_column):
     # Group by the combination of main_column and secondary_column
     combo_rankings = data.groupby([main_column, secondary_column]).agg({
@@ -17,7 +17,15 @@ def rank_combinations(data, main_column, secondary_column):
         'Amount Spent': 'sum',
         'Clicks all': 'sum',
         'Impressions': 'sum'
-    }).reset_index().sort_values(by='Purchases', ascending=False)
+    }).reset_index()
+
+    # Calculate additional metrics
+    combo_rankings['CPA'] = combo_rankings['Amount Spent'] / combo_rankings['Purchases']  # Cost per Acquisition
+    combo_rankings['CPC'] = combo_rankings['Amount Spent'] / combo_rankings['Clicks all']  # Cost per Click
+    combo_rankings['CPM'] = (combo_rankings['Amount Spent'] / combo_rankings['Impressions']) * 1000  # Cost per 1000 Impressions
+
+    # Sort the table by Purchases
+    combo_rankings = combo_rankings.sort_values(by='Purchases', ascending=False)
 
     return combo_rankings
 
