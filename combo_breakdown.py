@@ -79,7 +79,7 @@ def main():
         'Messaging Theme': 'first',
         'Creative Theme': 'first',
         'Ad Format': 'first',
-        'Landing Page': 'first',
+        'Landing Page Type': 'first',
         'Purchases': 'sum',
         'Amount Spent': 'sum',
         'Clicks all': 'sum',
