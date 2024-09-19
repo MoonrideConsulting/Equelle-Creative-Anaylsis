@@ -26,7 +26,8 @@ def main_dashboard():
         combo_breakdown.main()
 
     elif page == "Machine Learning Analysis":
-        st.markdown("<h2 style='text-align: center;'>Machine Learning Analyis</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>Machine Learning Analysis</h2>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center;'>Find variables/combos that the model deems more relevant in changing an ad's purchase volume.</h3>", unsafe_allow_html=True)
         machine_learning.main()
 
 # Run the dashboard
