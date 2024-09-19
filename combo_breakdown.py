@@ -32,6 +32,11 @@ def main():
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
 
+    # Replace None or missing values with 'N/A' in critical columns
+    data['Messaging Theme'].fillna('N/A', inplace=True)
+    data['Creative Theme'].fillna('N/A', inplace=True)
+    data['Batch'].fillna('No Batch', inplace=True)
+
     # Step 1: Create a new "Batch" column from "Ad Name" (if it doesn't exist already)
     if 'Batch' not in data.columns:
         data['Batch'] = data['Ad Name'].apply(lambda x: x.split('Batch')[-1].strip() if 'Batch' in x else 'No Batch')
@@ -88,4 +93,3 @@ def main():
 
     # Step 6: Display the filtered and grouped data
     st.dataframe(grouped_data)
-
