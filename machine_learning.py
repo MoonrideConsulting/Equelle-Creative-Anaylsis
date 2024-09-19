@@ -199,6 +199,7 @@ def main():
     model_data = prep_data(cleaned_data)
 
     metric = "Purchases"
+    
     num_combos = 2
         
     col1, col2 =  st.columns(2)    
@@ -209,7 +210,7 @@ def main():
 
     with col2: 
         # Perform linear regression with interaction terms
-        feature_importance_df = linear_regression_analysis(model_data, selected_metric, num_combos)
+        feature_importance_df = linear_regression_analysis(model_data, metric, num_combos)
 
         # Plot the resulting feature importance
         plot_linear_regression_coefficients(feature_importance_df)
