@@ -23,8 +23,6 @@ def filter_data(data, selected_messaging_theme, selected_creative_theme, selecte
 
 # Main function for Combo Breakdown page
 def main():
-    st.markdown("<h2 style='text-align: center;'>Combo Breakdown</h2>", unsafe_allow_html=True)
-
     # Load the data from session state (assuming it's already loaded)
     data = st.session_state.full_data
 
