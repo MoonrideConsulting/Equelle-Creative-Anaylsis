@@ -80,6 +80,11 @@ def main():
         max_date = data['Date'].max()
         date_range = st.date_input("Select Date Range", [min_date, max_date], min_value=min_date, max_value=max_date)
 
+    available_columns = ['Messaging Theme', 'Creative Theme', 'Ad Format', 'Landing Page Type']
+
+    main_column = st.selectbox('Select Main Column:', available_columns, index=0)
+    secondary_column = st.selectbox('Select Secondary Column:', available_columns, index=1)
+
         # Ensure both start_date and end_date are selected
         if len(date_range) == 2:
             start_date, end_date = date_range
@@ -90,7 +95,7 @@ def main():
     filtered_data = filter_data(data, selected_batch, start_date, end_date)
 
     # Step 4: Rank Messaging Theme by Purchases and display as DataFrame
-    messaging_theme_ranking = rank_by_purchases(filtered_data, 'Messaging Theme')
+    ranking = rank_by_purchases(filtered_data, main_column)
     
     st.subheader("Messaging Theme Rankings (by Purchases)")
     
@@ -107,6 +112,6 @@ def main():
         # Display treemap in the dropdown
         with st.expander(f"See combinations with Creative Theme for {theme_value}"):
             # Create and display the treemap
-            treemap_fig = create_treemap(combo_rankings, 'Messaging Theme', 'Creative Theme')
+            treemap_fig = create_treemap(combo_rankings, main_column, secondary_column)
             st.plotly_chart(treemap_fig)
 
