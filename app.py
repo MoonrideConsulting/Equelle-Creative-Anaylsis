@@ -1,10 +1,12 @@
 import streamlit as st
+
+st.set_page_config(page_title="Equelle Creative Analysis", page_icon="🧑‍🚀", layout="wide")
+
 import cross_section
 import ranked_combos
 import combo_breakdown
 import machine_learning
 
-st.set_page_config(page_title="Equelle Creative Analysis", page_icon="🧑‍🚀", layout="wide")
 
 
 # Main function to control navigation
