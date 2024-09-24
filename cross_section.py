@@ -6,6 +6,9 @@ from google.cloud import bigquery
 from datetime import datetime, timedelta
 import re
 
+def password_protection():
+        main_dashboard()
+
 # Function to extract the Batch information from Ad Name
 def extract_batch(ad_name):
     match = re.search(r'Batch.*', ad_name)
