@@ -47,10 +47,10 @@ def create_treemap(data, main_column, secondary_column):
     color_continuous_scale='RdBu',
     title=f'Treemap of {main_column} and {secondary_column}',
     hover_data=['Purchases', 'CPA', 'Amount Spent', 'Clicks all', 'Impressions']
-)
-
-fig.update_traces(branchvalues='remainder')
+    )
+    fig.update_traces(branchvalues='remainder')
     fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
+    
     return fig
 
 # Main function to display ranked combos with filters
