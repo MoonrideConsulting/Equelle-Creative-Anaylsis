@@ -44,7 +44,7 @@ def create_treemap(data, main_column, secondary_column):
     path=[secondary_column],
     values='Purchases',
     color='CPA',
-    range_color = [0,500],
+    range_color = [150, 350],
     color_continuous_scale=['green', 'red'],
     title=f'Treemap of {main_column} and {secondary_column}',
     hover_data={
