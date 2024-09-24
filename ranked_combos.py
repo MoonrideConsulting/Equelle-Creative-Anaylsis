@@ -34,7 +34,7 @@ def filter_data(data, selected_batch, start_date, end_date):
     return data
 
 # Function to create a treemap visualization
-def create_treemap(data, main_column, secondary_column):
+def create_treemap(data, main_column, secondary_column, theme_value):
     # Filter out rows where CPA is zero or NaN to avoid errors in the treemap
     data = data[data['CPA'] > 0]
     data = data[data['Purchases'] > 0]
@@ -53,7 +53,7 @@ def create_treemap(data, main_column, secondary_column):
         (0.5, 'yellow'),  # Yellow in the middle (0.5)
         (1.0, 'red')  # Red at the high end (1)
     ],
-    title=f'Treemap of {main_column} and {secondary_column}',
+    title=f'Treemap of {theme_value} and {secondary_column}',
     hover_data={
         'Purchases': True,  # Show
         'CPA': True,        # Show
@@ -125,7 +125,7 @@ def main():
         # Display treemap in the dropdown
         with st.expander(f"See combinations with Creative Theme for {theme_value}"):
             # Create and display the treemap
-            treemap_fig = create_treemap(filtered_combos, main_column, secondary_column)
+            treemap_fig = create_treemap(filtered_combos, main_column, secondary_column, theme_value)
             st.plotly_chart(treemap_fig)
 
         # Divider between each ranking and its dropdown
