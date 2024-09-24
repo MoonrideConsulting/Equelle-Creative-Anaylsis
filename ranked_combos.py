@@ -53,7 +53,7 @@ def create_treemap(data, main_column, secondary_column, theme_value):
         (0.5, 'yellow'),  # Yellow in the middle (0.5)
         (1.0, 'red')  # Red at the high end (1)
     ],
-    title=f'Treemap of {theme_value} and {secondary_column}',
+    title=f'Treemap of {theme_value} and {secondary_column}s',
     hover_data={
         'Purchases': True,  # Show
         'CPA': True,        # Show
