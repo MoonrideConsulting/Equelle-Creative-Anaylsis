@@ -40,14 +40,16 @@ def create_treemap(data, main_column, secondary_column):
     data = data[data['Purchases'] > 0]
     
     fig = px.treemap(
-        data,
-        path=[main_column, secondary_column],
-        values='Purchases',
-        color='CPA',
-        color_continuous_scale='RdBu',
-        title=f'Treemap of {main_column} and {secondary_column}',
-        hover_data=['Purchases', 'CPA', 'Amount Spent', 'Clicks all', 'Impressions']
-    )
+    data,
+    path=[secondary_column],  # Only the leaf nodes (Creative Theme)
+    values='Purchases',
+    color='CPA',
+    color_continuous_scale='RdBu',
+    title=f'Treemap of {main_column} and {secondary_column}',
+    hover_data=['Purchases', 'CPA', 'Amount Spent', 'Clicks all', 'Impressions']
+)
+
+fig.update_traces(branchvalues='remainder')
     fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
     return fig
 
