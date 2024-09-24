@@ -4,15 +4,6 @@ import pandas as pd
 # Function to rank each value of a variable based on Purchases
 def rank_by_purchases(data, column):
     ranking = data.groupby(column).agg({
-        'Purchases': 'sum'
-    }).reset_index().sort_values(by='Purchases', ascending=False)
-
-    return ranking
-
-# Function to get combination rankings for each value of the variable, with CPA, CPC, and CPM
-def rank_combinations(data, main_column, secondary_column):
-    # Group by the combination of main_column and secondary_column
-    combo_rankings = data.groupby([main_column, secondary_column]).agg({
         'Purchases': 'sum',
         'Amount Spent': 'sum',
         'Clicks all': 'sum',
@@ -20,14 +11,14 @@ def rank_combinations(data, main_column, secondary_column):
     }).reset_index()
 
     # Calculate additional metrics
-    combo_rankings['CPA'] = combo_rankings['Amount Spent'] / combo_rankings['Purchases']  # Cost per Acquisition
-    combo_rankings['CPC'] = combo_rankings['Amount Spent'] / combo_rankings['Clicks all']  # Cost per Click
-    combo_rankings['CPM'] = (combo_rankings['Amount Spent'] / combo_rankings['Impressions']) * 1000  # Cost per 1000 Impressions
+    ranking['CPM'] = (ranking['Amount Spent'] / ranking['Impressions']) * 1000
+    ranking['CPA'] = ranking['Amount Spent'] / ranking['Purchases']
+    ranking['CPC'] = ranking['Amount Spent'] / ranking['Clicks all']
 
-    # Sort the table by Purchases
-    combo_rankings = combo_rankings.sort_values(by='Purchases', ascending=False)
+    # Sort by Purchases in descending order
+    ranking = ranking.sort_values(by='Purchases', ascending=False)
 
-    return combo_rankings
+    return ranking
 
 # Function to filter data based on Batch and Date
 def filter_data(data, selected_batch, start_date, end_date):
@@ -77,34 +68,22 @@ def main():
     # Step 3: Filter the data based on Batch and Date
     filtered_data = filter_data(data, selected_batch, start_date, end_date)
 
-    # Step 4: Rank Messaging Theme by Purchases
+    # Step 4: Rank Messaging Theme by Purchases and display as DataFrame
     messaging_theme_ranking = rank_by_purchases(filtered_data, 'Messaging Theme')
-    creative_theme_ranking = rank_by_purchases(filtered_data, 'Creative Theme')
-
-    # Step 5: Display rankings for Messaging Theme
+    
     st.subheader("Messaging Theme Rankings (by Purchases)")
+    
+    # Show a DataFrame for each Messaging Theme
     for _, row in messaging_theme_ranking.iterrows():
         theme_value = row['Messaging Theme']
-        st.write(f"**{theme_value}** - Purchases: {row['Purchases']}")
-        
+        # Create a DataFrame for the current row
+        df = pd.DataFrame([row], columns=['Messaging Theme', 'Purchases', 'Amount Spent', 'Clicks all', 'Impressions', 'CPM', 'CPA', 'CPC'])
+        st.dataframe(df)
+
         # Get combination rankings with Creative Theme
-        combo_rankings = rank_combinations(filtered_data, 'Messaging Theme', 'Creative Theme')
-        filtered_combos = combo_rankings[combo_rankings['Messaging Theme'] == theme_value]
-
-        # Display combinations DataFrame in the dropdown
-        with st.expander(f"See combinations with Creative Theme for {theme_value}"):
-            st.dataframe(filtered_combos)
-
-    # Step 6: Display rankings for Creative Theme
-    st.subheader("Creative Theme Rankings (by Purchases)")
-    for _, row in creative_theme_ranking.iterrows():
-        theme_value = row['Creative Theme']
-        st.write(f"**{theme_value}** - Purchases: {row['Purchases']}")
-        
-        # Get combination rankings with Messaging Theme
-        combo_rankings = rank_combinations(filtered_data, 'Creative Theme', 'Messaging Theme')
+        combo_rankings = rank_by_purchases(filtered_data, 'Creative Theme')
         filtered_combos = combo_rankings[combo_rankings['Creative Theme'] == theme_value]
 
         # Display combinations DataFrame in the dropdown
-        with st.expander(f"See combinations with Messaging Theme for {theme_value}"):
+        with st.expander(f"See combinations with Creative Theme for {theme_value}"):
             st.dataframe(filtered_combos)
