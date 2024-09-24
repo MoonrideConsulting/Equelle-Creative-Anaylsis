@@ -1,13 +1,15 @@
 import streamlit as st
+
+# Ensure set_page_config is the first Streamlit command
+st.set_page_config(page_title="Equelle Creative Analysis", page_icon="🧑‍🚀", layout="wide")
+
 import cross_section
 import ranked_combos
 import combo_breakdown
 import machine_learning
 from google.oauth2 import service_account
 from google.cloud import bigquery
-
-# Ensure set_page_config is the first Streamlit command
-st.set_page_config(page_title="Equelle Creative Analysis", page_icon="🧑‍🚀", layout="wide")
+import pandas as pd
 
 # Function to load data from BigQuery
 def load_data():
