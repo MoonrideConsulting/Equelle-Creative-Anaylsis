@@ -11,7 +11,6 @@ from plotly.subplots import make_subplots
 from datetime import datetime, timedelta
 import re
 
-
 def password_protection():
         main_dashboard()
 
