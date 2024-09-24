@@ -35,9 +35,6 @@ def filter_data(data, selected_batch, start_date, end_date):
 
 # Function to create a treemap visualization
 def create_treemap(data, main_column, secondary_column):
-    # Ensure both columns are present in the DataFrame
-    if main_column not in data.columns:
-        data[main_column] = main_column
     fig = px.treemap(
         data,
         path=[main_column, secondary_column],
@@ -99,16 +96,10 @@ def main():
         st.dataframe(df)
 
         # Get combination rankings with Creative Theme
-        combo_rankings = rank_by_purchases(filtered_data, 'Creative Theme')
-        # Ensure the 'Messaging Theme' column is included in combo_rankings
-        combo_rankings['Messaging Theme'] = theme_value
-        filtered_combos = combo_rankings[combo_rankings['Creative Theme'] == theme_value]
+        combo_rankings = rank_by_purchases(filtered_data, ['Messaging Theme', 'Creative Theme'])
 
         # Display treemap in the dropdown
         with st.expander(f"See combinations with Creative Theme for {theme_value}"):
             # Create and display the treemap
-            st.write(combo_rankings)
-            st.write(filtered_combos)
             treemap_fig = create_treemap(combo_rankings, 'Messaging Theme', 'Creative Theme')
             st.plotly_chart(treemap_fig)
-
