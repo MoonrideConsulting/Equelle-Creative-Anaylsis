@@ -14,7 +14,7 @@ def main_dashboard():
  
     # Sidebar for navigation
     st.sidebar.title("Navigation")
-    page = st.sidebar.radio("Go to", ["Cross Section Analysis", "Ranked Combinations", "Combo Breakdown", "Machine Learning Analysis"], index=0)
+    page = st.sidebar.radio("Go to", ["Ranked Combinations", "Cross Section Analysis", "Combo Breakdown", "Machine Learning Analysis"], index=0)
 
     # Set page header and layout
     st.markdown("<h1 style='text-align: center;'>Equelle Creative Analysis Dashboard</h1>", unsafe_allow_html=True)
