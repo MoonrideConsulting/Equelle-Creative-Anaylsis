@@ -47,7 +47,7 @@ def create_treemap(data, main_column, secondary_column, theme_value):
     path=[secondary_column],
     values='Purchases',
     color='CPA',
-    range_color = [150, 350],
+    #range_color = [150, 350],
     color_continuous_scale=[
         (0.0, 'green'),  # Green at the low end (0)
         (0.5, 'yellow'),  # Yellow in the middle (0.5)
