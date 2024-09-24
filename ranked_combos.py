@@ -45,7 +45,7 @@ def create_treemap(data, main_column, secondary_column):
     values='Purchases',
     color='CPA',
     color_continuous_scale='RdBu',
-    title=f'Treemap of {main_column} and {secondary_column}',
+    title=f'Treemap of {data[main_column].iloc[0]} and {secondary_column}s',
     hover_data=['Purchases', 'CPA', 'Amount Spent', 'Clicks all', 'Impressions']
     )
     fig.update_traces(branchvalues='remainder')
@@ -107,8 +107,6 @@ def main():
         # Display treemap in the dropdown
         with st.expander(f"See combinations with Creative Theme for {theme_value}"):
             # Create and display the treemap
-            combo_rankings = combo_rankings[combo_rankings['Messaging Theme'] == theme_value]
-            st.write(combo_rankings)
             treemap_fig = create_treemap(combo_rankings, 'Messaging Theme', 'Creative Theme')
             st.plotly_chart(treemap_fig)
 
