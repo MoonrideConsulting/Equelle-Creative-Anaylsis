@@ -113,7 +113,6 @@ def main():
         # Display treemap in the dropdown
         with st.expander(f"See combinations with Creative Theme for {theme_value}"):
             # Create and display the treemap
-            st.write(filtered_combos)
             treemap_fig = create_treemap(filtered_combos, main_column, secondary_column)
             st.plotly_chart(treemap_fig)
 
