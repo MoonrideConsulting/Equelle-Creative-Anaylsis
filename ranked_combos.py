@@ -49,11 +49,6 @@ def create_treemap(data, main_column, secondary_column):
     hover_data={
         'Purchases': True,  # Show
         'CPA': True,        # Show
-        'Amount Spent': True,  # Show
-        'Clicks all': True,  # Show
-        'Impressions': True,  # Show
-        'labels': False,    # Hide
-        'parentid': False   # Hide
     }
     )
 
