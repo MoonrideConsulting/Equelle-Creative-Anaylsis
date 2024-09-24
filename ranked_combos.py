@@ -97,7 +97,7 @@ def main():
     # Step 4: Rank Messaging Theme by Purchases and display as DataFrame
     ranking = rank_by_purchases(filtered_data, main_column)
     
-    st.subheader("Messaging Theme Rankings (by Purchases)")
+    st.subheader(f"{main_column} Rankings (by Purchases)")
     
     # Show a DataFrame for each Messaging Theme
     for _, row in ranking.iterrows():
