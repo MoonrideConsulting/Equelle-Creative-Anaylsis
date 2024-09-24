@@ -80,16 +80,16 @@ def main():
         max_date = data['Date'].max()
         date_range = st.date_input("Select Date Range", [min_date, max_date], min_value=min_date, max_value=max_date)
 
-    available_columns = ['Messaging Theme', 'Creative Theme', 'Ad Format', 'Landing Page Type']
-
-    main_column = st.selectbox('Select Main Column:', available_columns, index=0)
-    secondary_column = st.selectbox('Select Secondary Column:', available_columns, index=1)
-
         # Ensure both start_date and end_date are selected
         if len(date_range) == 2:
             start_date, end_date = date_range
         else:
             start_date, end_date = min_date, max_date  # Default to full date range if not fully selected
+
+    available_columns = ['Messaging Theme', 'Creative Theme', 'Ad Format', 'Landing Page Type']
+
+    main_column = st.selectbox('Select Main Column:', available_columns, index=0)
+    secondary_column = st.selectbox('Select Secondary Column:', available_columns, index=1)
 
     # Step 3: Filter the data based on Batch and Date
     filtered_data = filter_data(data, selected_batch, start_date, end_date)
