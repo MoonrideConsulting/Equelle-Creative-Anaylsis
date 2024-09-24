@@ -100,7 +100,7 @@ def main():
     st.subheader("Messaging Theme Rankings (by Purchases)")
     
     # Show a DataFrame for each Messaging Theme
-    for _, row in messaging_theme_ranking.iterrows():
+    for _, row in ranking.iterrows():
         theme_value = row['Messaging Theme']
         # Create a DataFrame for the current row
         df = pd.DataFrame([row], columns=['Messaging Theme', 'Purchases', 'Amount Spent', 'Clicks all', 'Impressions', 'CPM', 'CPA', 'CPC'])
