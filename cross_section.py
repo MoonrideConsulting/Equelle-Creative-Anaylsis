@@ -90,18 +90,6 @@ def prep_data(data):
     return model_data
 
 def main_dashboard():
-    # Load data if not already in session state
-    if 'full_data' not in st.session_state:
-        credentials = service_account.Credentials.from_service_account_info(
-            st.secrets["gcp_service_account"]
-        )
-        client = bigquery.Client(credentials=credentials)
-        query = f"""
-        SELECT *
-        FROM `Equelle_Segments.equelle_ad_level_all`
-        WHERE DATE(Date) >= "2024-01-01";"""
-        st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
-
     # Data preparation
     data = st.session_state.full_data
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
