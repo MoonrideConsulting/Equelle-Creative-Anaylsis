@@ -35,6 +35,9 @@ def filter_data(data, selected_batch, start_date, end_date):
 
 # Function to create a treemap visualization
 def create_treemap(data, main_column, secondary_column):
+    # Filter out rows where CPA is zero or NaN to avoid errors in the treemap
+    data = data[data['CPA'] > 0]
+
     fig = px.treemap(
         data,
         path=[main_column, secondary_column],
@@ -103,3 +106,4 @@ def main():
             # Create and display the treemap
             treemap_fig = create_treemap(combo_rankings, 'Messaging Theme', 'Creative Theme')
             st.plotly_chart(treemap_fig)
+
