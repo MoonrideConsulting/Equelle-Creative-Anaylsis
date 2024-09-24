@@ -41,18 +41,22 @@ def create_treemap(data, main_column, secondary_column):
     
     fig = px.treemap(
     data,
-    path=[secondary_column],  # Only the leaf nodes (Creative Theme)
+    path=[secondary_column],
     values='Purchases',
     color='CPA',
     color_continuous_scale='RdBu',
-    title=f'Treemap of {data[main_column].iloc[0]} and {secondary_column}s',
+    title=f'Treemap of {main_column} and {secondary_column}',
     hover_data={
-        'Purchases': True,  
-        'CPA': True,        
-        'label': False,    
-        'parentid': False   
+        'Purchases': True,  # Show
+        'CPA': True,        # Show
+        'Amount Spent': True,  # Show
+        'Clicks all': True,  # Show
+        'Impressions': True,  # Show
+        'labels': False,    # Hide
+        'parentid': False   # Hide
     }
     )
+
     fig.update_traces(branchvalues='remainder')
     fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
     
