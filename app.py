@@ -9,6 +9,17 @@ def main_dashboard():
 
     st.set_page_config(page_title="Equelle Creative Analysis", page_icon="🧑‍🚀", layout="wide")
 
+    if 'full_data' not in st.session_state:
+        credentials = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"]
+        )
+        client = bigquery.Client(credentials=credentials)
+        query = f"""
+        SELECT *
+        FROM `Equelle_Segments.equelle_ad_level_all`
+        WHERE DATE(Date) >= "2024-01-01";"""
+        st.session_state.full_data = pandas.read_gbq(query, credentials=credentials)
+
     # Sidebar for navigation
     st.sidebar.title("Navigation")
     page = st.sidebar.radio("Go to", ["Ranked Combinations", "Cross Section Analysis", "Combo Breakdown", "Machine Learning Analysis"], index=0)
