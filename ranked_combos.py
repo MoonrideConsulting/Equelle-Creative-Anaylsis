@@ -105,7 +105,7 @@ def main():
         # Display treemap in the dropdown
         with st.expander(f"See combinations with Creative Theme for {theme_value}"):
             # Create and display the treemap
-            st.write(combo_rankings)
+            combo_rankings = combo_rankings[combo_rankings['Messaging Theme'] == theme_value]
             treemap_fig = create_treemap(combo_rankings, 'Messaging Theme', 'Creative Theme')
             st.plotly_chart(treemap_fig)
 
