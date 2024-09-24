@@ -4,10 +4,11 @@ import ranked_combos
 import combo_breakdown
 import machine_learning
 
+st.set_page_config(page_title="Equelle Creative Analysis", page_icon="🧑‍🚀", layout="wide")
+
+
 # Main function to control navigation
 def main_dashboard():
-
-    st.set_page_config(page_title="Equelle Creative Analysis", page_icon="🧑‍🚀", layout="wide")
 
     if 'full_data' not in st.session_state:
         credentials = service_account.Credentials.from_service_account_info(
