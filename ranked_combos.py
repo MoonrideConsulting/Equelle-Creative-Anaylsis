@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 # Function to rank each value of a variable based on Purchases
 def rank_by_purchases(data, column):
@@ -25,12 +26,26 @@ def filter_data(data, selected_batch, start_date, end_date):
     # Apply the Batch filter
     if selected_batch != "All":
         data = data[data['Batch'] == selected_batch]
-    
+
     # Apply the Date filter only if both start_date and end_date are selected
     if start_date and end_date:
         data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
-    
+
     return data
+
+# Function to create a treemap visualization
+def create_treemap(data, main_column, secondary_column):
+    fig = px.treemap(
+        data,
+        path=[main_column, secondary_column],
+        values='Purchases',
+        color='CPA',
+        color_continuous_scale='RdBu',
+        title=f'Treemap of {main_column} and {secondary_column}',
+        hover_data=['Purchases', 'CPA', 'Amount Spent', 'Clicks all', 'Impressions']
+    )
+    fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
+    return fig
 
 # Main function to display ranked combos with filters
 def main():
@@ -84,6 +99,9 @@ def main():
         combo_rankings = rank_by_purchases(filtered_data, 'Creative Theme')
         filtered_combos = combo_rankings[combo_rankings['Creative Theme'] == theme_value]
 
-        # Display combinations DataFrame in the dropdown
+        # Display treemap in the dropdown
         with st.expander(f"See combinations with Creative Theme for {theme_value}"):
-            st.dataframe(filtered_combos)
+            # Create and display the treemap
+            treemap_fig = create_treemap(filtered_combos, 'Messaging Theme', 'Creative Theme')
+            st.plotly_chart(treemap_fig)
+
