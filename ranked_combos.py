@@ -46,7 +46,12 @@ def create_treemap(data, main_column, secondary_column):
     color='CPA',
     color_continuous_scale='RdBu',
     title=f'Treemap of {data[main_column].iloc[0]} and {secondary_column}s',
-    hover_data=['Purchases', 'CPA']
+    hover_data={
+        'Purchases': True,  
+        'CPA': True,        
+        'labels': False,    
+        'parentid': False   
+    }
     )
     fig.update_traces(branchvalues='remainder')
     fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
