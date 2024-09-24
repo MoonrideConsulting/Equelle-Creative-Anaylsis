@@ -109,6 +109,6 @@ def main():
             # Create and display the treemap
             st.write(combo_rankings)
             st.write(filtered_combos)
-            treemap_fig = create_treemap(filtered_combos, 'Messaging Theme', 'Creative Theme')
+            treemap_fig = create_treemap(combo_rankings, 'Messaging Theme', 'Creative Theme')
             st.plotly_chart(treemap_fig)
 
