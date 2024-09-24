@@ -39,6 +39,9 @@ def create_treemap(data, main_column, secondary_column):
     data = data[data['CPA'] > 0]
     data = data[data['Purchases'] > 0]
     
+    #round CPA to look better
+    data['CPA'] = round(data['CPA'], 2)
+    
     fig = px.treemap(
     data,
     path=[secondary_column],
