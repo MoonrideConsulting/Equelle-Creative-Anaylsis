@@ -101,13 +101,13 @@ def main():
     
     # Show a DataFrame for each Messaging Theme
     for _, row in ranking.iterrows():
-        theme_value = row['Messaging Theme']
+        theme_value = row[main_column]
         # Create a DataFrame for the current row
-        df = pd.DataFrame([row], columns=['Messaging Theme', 'Purchases', 'Amount Spent', 'Clicks all', 'Impressions', 'CPM', 'CPA', 'CPC'])
+        df = pd.DataFrame([row], columns=[main_column, 'Purchases', 'Amount Spent', 'Clicks all', 'Impressions', 'CPM', 'CPA', 'CPC'])
         st.dataframe(df)
 
         # Get combination rankings with Creative Theme
-        combo_rankings = rank_by_purchases(filtered_data, ['Messaging Theme', 'Creative Theme'])
+        combo_rankings = rank_by_purchases(filtered_data, [main_column, secondary_column])
 
         # Display treemap in the dropdown
         with st.expander(f"See combinations with Creative Theme for {theme_value}"):
