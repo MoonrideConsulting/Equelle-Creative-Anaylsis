@@ -128,3 +128,5 @@ def main():
             treemap_fig = create_treemap(filtered_combos, main_column, secondary_column)
             st.plotly_chart(treemap_fig)
 
+        # Divider between each ranking and its dropdown
+        st.divider()
