@@ -43,23 +43,23 @@ def cross_section_analysis(data, num_combos, selected_columns):
     for combo in combinations:
         # Group by the combination of columns and aggregate required metrics
         grouped = data.groupby(list(combo)).agg({
-            'Amount Spent': 'sum',
-            'Clicks all': 'sum',
+            'Spend': 'sum',
+            'Clicks': 'sum',
             'Impressions': 'sum',
             'Purchases': 'sum'
         }).reset_index()
 
         # Calculate additional metrics
-        grouped['CPM'] = round((grouped['Amount Spent'] / grouped['Impressions']) * 1000, 2)
-        grouped['CPA'] = round(grouped['Amount Spent'] / grouped['Purchases'], 2)
-        grouped['CPC'] = round(grouped['Amount Spent'] / grouped['Clicks all'], 2)
-        grouped['Amount Spent'] = round(grouped['Amount Spent'], 0)
+        grouped['CPM'] = round((grouped['Spend'] / grouped['Impressions']) * 1000, 2)
+        grouped['CPA'] = round(grouped['Spend'] / grouped['Purchases'], 2)
+        grouped['CPC'] = round(grouped['Spend'] / grouped['Clicks'], 2)
+        grouped['Spend'] = round(grouped['Spend'], 0)
 
         # Combine the values in the columns to create a 'Combination' identifier
         grouped['Combination'] = grouped.apply(lambda row: ', '.join([f"{col}={row[col]}" for col in combo]), axis=1)
 
         # Append the results to the combined dataframe
-        combined_results = pd.concat([combined_results, grouped[['Combination', 'Purchases', 'Amount Spent', 'Clicks all', 'Impressions', 'CPM', 'CPA', 'CPC']]])
+        combined_results = pd.concat([combined_results, grouped[['Combination', 'Purchases', 'Spend', 'Clicks', 'Impressions', 'CPM', 'CPA', 'CPC']]])
 
     # Sort the results by Purchases in descending order
     combined_results = combined_results.sort_values(by='Purchases', ascending=False)
@@ -84,6 +84,9 @@ def main_dashboard():
     data = st.session_state.full_data
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
+
+    # Change Names of Clicks and Spend columns
+    data.rename(columns={'Clicks all': 'Clicks', 'Amount Spent': 'Spend'}, inplace=True)
 
     # Step 1: Create a new "Batch" column from "Ad Name"
     data['Batch'] = data['Ad Name'].apply(extract_batch)
