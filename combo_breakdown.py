@@ -113,3 +113,5 @@ def main():
 
     # Step 7: Display the filtered and grouped data
     st.dataframe(grouped_data)
+
+    st.dataframe(st.session_state.full_data)
