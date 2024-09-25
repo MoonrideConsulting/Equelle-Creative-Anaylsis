@@ -147,7 +147,7 @@ def main_dashboard():
     combo_table = cross_section_analysis(filtered_data, num_combos, selected_columns)
 
     display_df = combo_table.copy()
-    display_df['Spend'] = display_df['Spend'].apply(lambda x: f"${x}")
+    display_df['Spend'] = display_df['Spend'].apply(lambda x: f"${x:,.0f}")
     display_df['CPM'] = display_df['CPM'].apply(lambda x: f"${x:,.2f}")
     display_df['CPA'] = display_df['CPA'].apply(lambda x: f"${x:,.2f}")
     display_df['CPC'] = display_df['CPC'].apply(lambda x: f"${x:,.2f}")
