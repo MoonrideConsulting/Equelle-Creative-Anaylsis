@@ -146,8 +146,14 @@ def main_dashboard():
     # Step 6: Generate the cross-sectional analysis table
     combo_table = cross_section_analysis(filtered_data, num_combos, selected_columns)
 
+    display_df = combo_table.copy()
+    display_df['Spend'] = display_df['Spend'].apply(lambda x: f"${x:,.2f}")
+    display_df['CPM'] = display_df['CPM'].apply(lambda x: f"${x:,.2f}")
+    display_df['CPA'] = display_df['CPA'].apply(lambda x: f"${x:,.2f}")
+    display_df['CPC'] = display_df['CPC'].apply(lambda x: f"${x:,.2f}")
+
     # Step 7: Display the filtered combo table
-    st.dataframe(combo_table, use_container_width=True)
+    st.dataframe(display_df, use_container_width=True)
 
 # Run the dashboard
 password_protection()
