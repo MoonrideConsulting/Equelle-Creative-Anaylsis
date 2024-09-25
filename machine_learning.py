@@ -26,23 +26,23 @@ import altair as alt
 
 def prep_data(data):
     #Remove NAs
-    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Amount Spent', 'Clicks all', 'Impressions']
+    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Spend', 'Clicks', 'Impressions']
     data[features] = data[features].replace("", np.nan)
     cleaned_data = data.dropna()
     cleaned_data = cleaned_data.loc[cleaned_data['Messaging Theme'] != 'N/A']
 
     #Group data
     model_data = cleaned_data.groupby(['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']).agg({
-        'Amount Spent': 'sum',               # Sum 'Spend'
-        'Clicks all': 'sum',              # Sum 'Clicks'
+        'Spend': 'sum',               # Sum 'Spend'
+        'Clicks': 'sum',              # Sum 'Clicks'
         'Impressions': 'sum',         # Sum 'Impressions'
         'Purchases': 'sum'            # Sum 'Purchases'
     }).reset_index()
 
-    model_data['CPM'] = round((model_data['Amount Spent'] / model_data['Impressions']) * 1000, 2)
-    model_data['CPA'] = round(model_data['Amount Spent'] / model_data['Purchases'], 2)
-    model_data['CPC'] = round(model_data['Amount Spent'] / model_data['Clicks all'], 2)
-    model_data['Amount Spent'] = round(model_data['Amount Spent'], 0)
+    model_data['CPM'] = round((model_data['Spend'] / model_data['Impressions']) * 1000, 2)
+    model_data['CPA'] = round(model_data['Spend'] / model_data['Purchases'], 2)
+    model_data['CPC'] = round(model_data['Spend'] / model_data['Clicks'], 2)
+    model_data['Spend'] = round(model_data['Spend'], 0)
     model_data.dropna(inplace = True)
         
     return model_data
@@ -66,7 +66,7 @@ def generate_interaction_terms(X_encoded, level):
 # Function to prepare data and train a Random Forest model
 def feature_importance_analysis(data, var):
     # Select relevant columns
-    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Amount Spent', 'Clicks all', 'Impressions']
+    features = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Spend', 'Clicks', 'Impressions']
     target = var
 
     # Separate the input features (X) and target variable (y)
@@ -192,6 +192,9 @@ def main():
     data = st.session_state.full_data
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
+
+    # Change Names of Clicks and Spend columns
+    data.rename(columns={'Clicks': 'Clicks all', 'Amount Spent': 'Spend'}, inplace=True)
 
     # ML Analysis Section (we can leave this for now, but adding filter flexibility)
     cleaned_data = data.dropna()
