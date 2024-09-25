@@ -110,6 +110,12 @@ def main():
         'Ad Preview Shareable Link': 'first'  # Get the first Ad Preview Link
     }).reset_index()
 
+    # Calculate additional metrics
+    grouped_data['CPM'] = round((grouped_data['Spend'] / grouped_data['Impressions']) * 1000, 2)
+    grouped_data['CPA'] = round(grouped_data['Spend'] / grouped_data['Purchases'], 2)
+    grouped_data['CPC'] = round(grouped_data['Spend'] / grouped_data['Clicks'], 2)
+    grouped_data['Spend'] = round(grouped_data['Spend'], 0)
+
     # Step 6: Add the 'Ad Preview Shareable Link' as a clickable link behind 'Ad Name'
     grouped_data['Ad Name'] = grouped_data.apply(
         lambda row: f'<a href="{row["Ad Preview Shareable Link"]}" target="_blank">{row["Ad Name"]}</a>',
