@@ -103,15 +103,18 @@ def main():
         'Purchases': 'sum',
         'Amount Spent': 'sum',
         'Clicks all': 'sum',
-        'Impressions': 'sum'
+        'Impressions': 'sum',
+        'Ad Preview Shareable Link': 'first'  # Get the first Ad Preview Link
     }).reset_index()
 
-    # Step 6: Calculate additional metrics
-    grouped_data['CPA'] = grouped_data['Amount Spent'] / grouped_data['Purchases']  # Cost per Acquisition
-    grouped_data['CPC'] = grouped_data['Amount Spent'] / grouped_data['Clicks all']  # Cost per Click
-    grouped_data['CPM'] = (grouped_data['Amount Spent'] / grouped_data['Impressions']) * 1000  # Cost per 1000 Impressions
+    # Step 6: Add the 'Ad Preview Shareable Link' as a clickable link behind 'Ad Name'
+    grouped_data['Ad Name'] = grouped_data.apply(
+        lambda row: f'<a href="{row["Ad Preview Shareable Link"]}" target="_blank">{row["Ad Name"]}</a>',
+        axis=1
+    )
 
-    # Step 7: Display the filtered and grouped data
-    st.dataframe(grouped_data)
+    # Step 7: Drop the 'Ad Preview Shareable Link' column from display as we already linked it
+    grouped_data = grouped_data.drop(columns=['Ad Preview Shareable Link'])
 
-    st.dataframe(st.session_state.full_data)
+    # Step 8: Display the dataframe with clickable links using st.markdown and HTML
+    st.markdown(grouped_data.to_html(escape=False), unsafe_allow_html=True)
