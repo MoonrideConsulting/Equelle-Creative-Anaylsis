@@ -37,6 +37,9 @@ def main():
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
 
+    # Change Names of Clicks and Spend columns
+    data.rename(columns={'Clicks all': 'Clicks', 'Amount Spent': 'Spend'}, inplace=True)
+
     # Replace None or missing values with 'N/A' in critical columns
     data['Messaging Theme'].fillna('N/A', inplace=True)
     data['Creative Theme'].fillna('N/A', inplace=True)
@@ -101,8 +104,8 @@ def main():
         'Ad Format': 'first',
         'Landing Page Type': 'first',
         'Purchases': 'sum',
-        'Amount Spent': 'sum',
-        'Clicks all': 'sum',
+        'Spend': 'sum',
+        'Clicks': 'sum',
         'Impressions': 'sum',
         'Ad Preview Shareable Link': 'first'  # Get the first Ad Preview Link
     }).reset_index()
