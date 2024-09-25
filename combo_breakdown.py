@@ -119,5 +119,12 @@ def main():
     # Step 7: Drop the 'Ad Preview Shareable Link' column from display as we already linked it
     grouped_data = grouped_data.drop(columns=['Ad Preview Shareable Link'])
 
+    # Format the monetary columns for display
+    display_df = grouped_data.copy()
+    display_df['Spend'] = display_df['Spend'].apply(lambda x: f"${x:,.2f}")
+    display_df['CPM'] = display_df['CPM'].apply(lambda x: f"${x:,.2f}")
+    display_df['CPA'] = display_df['CPA'].apply(lambda x: f"${x:,.2f}")
+    display_df['CPC'] = display_df['CPC'].apply(lambda x: f"${x:,.2f}")
+
     # Step 8: Display the dataframe with clickable links using st.markdown and HTML
-    st.markdown(grouped_data.to_html(escape=False), unsafe_allow_html=True)
+    st.markdown(display_df.to_html(escape=False), unsafe_allow_html=True)
