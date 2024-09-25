@@ -127,7 +127,7 @@ def main():
 
     # Format the monetary columns for display
     display_df = grouped_data.copy()
-    display_df['Spend'] = display_df['Spend'].apply(lambda x: f"${x:,.2f}")
+    display_df['Spend'] = display_df['Spend'].apply(lambda x: f"${x:,.0f}")
     display_df['CPM'] = display_df['CPM'].apply(lambda x: f"${x:,.2f}")
     display_df['CPA'] = display_df['CPA'].apply(lambda x: f"${x:,.2f}")
     display_df['CPC'] = display_df['CPC'].apply(lambda x: f"${x:,.2f}")
