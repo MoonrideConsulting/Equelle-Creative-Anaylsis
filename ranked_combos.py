@@ -119,7 +119,12 @@ def main():
         theme_value = row[main_column]
         # Create a DataFrame for the current row
         df = pd.DataFrame([row], columns=[main_column, 'Purchases', 'Spend', 'Clicks', 'Impressions', 'CPM', 'CPA', 'CPC'])
-        st.write(df.reset_index(drop=True))
+        display_df = df.copy()
+        display_df['Spend'] = display_df['Spend'].apply(lambda x: f"${x:,.0f}")
+        display_df['CPM'] = display_df['CPM'].apply(lambda x: f"${x:,.2f}")
+        display_df['CPA'] = display_df['CPA'].apply(lambda x: f"${x:,.2f}")
+        display_df['CPC'] = display_df['CPC'].apply(lambda x: f"${x:,.2f}")
+        st.write(display_df.reset_index(drop=True))
 
         # Get combination rankings with Creative Theme
         combo_rankings = rank_by_purchases(filtered_data, [main_column, secondary_column])
