@@ -6,15 +6,15 @@ import plotly.express as px
 def rank_by_purchases(data, column):
     ranking = data.groupby(column).agg({
         'Purchases': 'sum',
-        'Amount Spent': 'sum',
-        'Clicks all': 'sum',
+        'Spend': 'sum',
+        'Clicks': 'sum',
         'Impressions': 'sum'
     }).reset_index()
 
     # Calculate additional metrics
-    ranking['CPM'] = (ranking['Amount Spent'] / ranking['Impressions']) * 1000
-    ranking['CPA'] = ranking['Amount Spent'] / ranking['Purchases']
-    ranking['CPC'] = ranking['Amount Spent'] / ranking['Clicks all']
+    ranking['CPM'] = (ranking['Spend'] / ranking['Impressions']) * 1000
+    ranking['CPA'] = ranking['Spend'] / ranking['Purchases']
+    ranking['CPC'] = ranking['Spend'] / ranking['Clicks']
 
     # Sort by Purchases in descending order
     ranking = ranking.sort_values(by='Purchases', ascending=False)
@@ -74,6 +74,9 @@ def main():
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
 
+    # Change Names of Clicks and Spend columns
+    data.rename(columns={'Clicks all': 'Clicks', 'Amount Spent': 'Spend'}, inplace=True)
+
     # Step 1: Create a new "Batch" column from "Ad Name" (if it doesn't exist already)
     if 'Batch' not in data.columns:
         data['Batch'] = data['Ad Name'].apply(lambda x: x.split('Batch')[-1].strip() if 'Batch' in x else 'No Batch')
@@ -115,7 +118,7 @@ def main():
     for _, row in ranking.iterrows():
         theme_value = row[main_column]
         # Create a DataFrame for the current row
-        df = pd.DataFrame([row], columns=[main_column, 'Purchases', 'Amount Spent', 'Clicks all', 'Impressions', 'CPM', 'CPA', 'CPC'])
+        df = pd.DataFrame([row], columns=[main_column, 'Purchases', 'Spend', 'Clicks', 'Impressions', 'CPM', 'CPA', 'CPC'])
         st.write(df.reset_index(drop=True))
 
         # Get combination rankings with Creative Theme
