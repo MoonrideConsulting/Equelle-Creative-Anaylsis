@@ -124,7 +124,8 @@ def main():
 
     # Step 7: Drop the 'Ad Preview Shareable Link' column from display as we already linked it
     grouped_data = grouped_data.drop(columns=['Ad Preview Shareable Link'])
-
+    grouped_data = grouped_data.sort_values(by='Spend', ascending=False)
+    
     # Format the monetary columns for display
     display_df = grouped_data.copy()
     display_df['Spend'] = display_df['Spend'].apply(lambda x: f"${x:,.0f}")
