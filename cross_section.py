@@ -1,79 +1,118 @@
 import streamlit as st
 import pandas as pd
+import itertools
+from google.oauth2 import service_account
+from google.cloud import bigquery
+from datetime import datetime, timedelta
+import re
 
-# Function to filter the data based on selected criteria
-def filter_data(data, selected_batch, start_date, end_date, selected_messaging_theme, selected_creative_theme, selected_format, selected_landing_page, selected_creative_imagery, selected_text_hook):
-    # Apply Batch and Date filters
+def password_protection():
+        main_dashboard()
+
+# Function to extract the Batch information from Ad Name
+def extract_batch(ad_name):
+    match = re.search(r'Batch.*', ad_name)
+    return match.group(0) if match else 'No Batch'
+
+# Function to filter data based on selected criteria
+def filter_data(data, selected_batch, start_date, end_date, selected_filters):
+    # Apply Batch filter
     if selected_batch != "All":
         data = data[data['Batch'] == selected_batch]
-
+    
+    # Apply Date filter only if both start and end dates are selected
     if start_date and end_date:
         data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
 
-    # Apply Messaging Theme filter
-    if selected_messaging_theme != "All":
-        data = data[data['Messaging Theme'] == selected_messaging_theme]
-
-    # Apply Creative Theme filter
-    if selected_creative_theme != "All":
-        data = data[data['Creative Theme'] == selected_creative_theme]
-
-    # Apply Ad Format filter
-    if selected_format != "All":
-        data = data[data['Ad Format'] == selected_format]
-
-    # Apply Landing Page Type filter
-    if selected_landing_page != "All":
-        data = data[data['Landing Page Type'] == selected_landing_page]
-
-    # Apply Creative Imagery filter
-    if selected_creative_imagery != "All":
-        data = data[data['Creative Imagery'] == selected_creative_imagery]
-
-    # Apply Text Hook filter
-    if selected_text_hook != "All":
-        data = data[data['Text Hook'] == selected_text_hook]
+    # Apply filters for selected variables
+    for column, selected_value in selected_filters.items():
+        if selected_value != "All":
+            data = data[data[column] == selected_value]
 
     return data
 
-# Main function for Combo Breakdown page
-def main():
-    # Load the data from session state (assuming it's already loaded)
-    data = st.session_state.full_data
+# Function to create the cross-sectional analysis table
+def cross_section_analysis(data, num_combos, selected_columns):
+    # Generate all combinations of the specified number of columns
+    combinations = list(itertools.combinations(selected_columns, num_combos))
 
-    # Prepare the data (assuming relevant columns exist)
+    # Create an empty dataframe to store all results
+    combined_results = pd.DataFrame()
+
+    # Loop through each combination of columns and filter rows that match the combination
+    for combo in combinations:
+        # Group by the combination of columns and aggregate required metrics
+        grouped = data.groupby(list(combo)).agg({
+            'Spend': 'sum',
+            'Clicks': 'sum',
+            'Impressions': 'sum',
+            'Purchases': 'sum'
+        }).reset_index()
+
+        # Calculate additional metrics
+        grouped['CPM'] = round((grouped['Spend'] / grouped['Impressions']) * 1000, 2)
+        grouped['CPA'] = round(grouped['Spend'] / grouped['Purchases'], 2)
+        grouped['CPC'] = round(grouped['Spend'] / grouped['Clicks'], 2)
+        grouped['Spend'] = round(grouped['Spend'], 0)
+
+        # Combine the values in the columns to create a 'Combination' identifier
+        grouped['Combination'] = grouped.apply(lambda row: ', '.join([f"{col}={row[col]}" for col in combo]), axis=1)
+
+        # Append the results to the combined dataframe
+        combined_results = pd.concat([combined_results, grouped[['Combination', 'Purchases', 'Spend', 'Clicks', 'Impressions', 'CPM', 'CPA', 'CPC']]])
+
+    # Sort the results by Purchases in descending order
+    combined_results = combined_results.sort_values(by='Purchases', ascending=False)
+
+    return combined_results
+
+# Main dashboard function
+def main_dashboard():
+    # Load data if not already in session state
+    if 'full_data' not in st.session_state:
+        credentials = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"]
+        )
+        client = bigquery.Client(credentials=credentials)
+        query = f"""
+        SELECT *
+        FROM `Equelle_Segments.equelle_ad_level_all`
+        WHERE DATE(Date) >= "2024-01-01";"""
+        st.session_state.full_data = pd.read_gbq(query, credentials=credentials)
+
+    # Data preparation
+    data = st.session_state.full_data
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
 
     # Change Names of Clicks and Spend columns
     data.rename(columns={'Clicks all': 'Clicks', 'Amount Spent': 'Spend'}, inplace=True)
 
-    # Replace None or missing values with 'N/A' in critical columns
-    data['Messaging Theme'].fillna('N/A', inplace=True)
-    data['Creative Theme'].fillna('N/A', inplace=True)
-    data['Batch'].fillna('No Batch', inplace=True)
-    data['Ad Format'].fillna('N/A', inplace=True)
-    data['Landing Page Type'].fillna('N/A', inplace=True)
-    data['Creative Imagery'].fillna('N/A', inplace=True)
-    data['Text Hook'].fillna('N/A', inplace=True)
+    # Step 1: Create a new "Batch" column from "Ad Name"
+    data['Batch'] = data['Ad Name'].apply(extract_batch)
 
-    # Step 1: Create a new "Batch" column from "Ad Name" (if it doesn't exist already)
-    if 'Batch' not in data.columns:
-        data['Batch'] = data['Ad Name'].apply(lambda x: x.split('Batch')[-1].strip() if 'Batch' in x else 'No Batch')
-
-    # Step 2: Batch and Date filters at the top
+    # Step 2: Create columns for side-by-side layout
     col1, col2 = st.columns(2)
 
+    # Step 3: Batch and Date filters inside columns
     with col1:
-        # Batch filter
+        # Add a Batch filter
         batch_options = ["All"] + sorted(data['Batch'].unique())
         selected_batch = st.selectbox('Select Batch:', batch_options, index=0)
 
     with col2:
-        # Date range filter
+        # Add a Date range filter
         min_date = data['Date'].min()
         max_date = data['Date'].max()
-        date_range = st.date_input("Select Date Range", [min_date, max_date], min_value=min_date, max_value=max_date)
+        
+        # Initialize the date range to None to avoid errors
+        date_range = st.date_input(
+            "Select Date Range",
+            [min_date, max_date],
+            min_value=min_date,
+            max_value=max_date,
+            key='date_range'
+        )
 
         # Ensure both start_date and end_date are selected
         if len(date_range) == 2:
@@ -81,57 +120,40 @@ def main():
         else:
             start_date, end_date = min_date, max_date  # Default to full date range if not fully selected
 
-    # Step 3: Additional filters for Messaging Theme, Creative Theme, Ad Format, Landing Page Type, Creative Imagery, and Text Hook
-    col3, col4, col5, col6, col7, col8 = st.columns(6)
+    # Define available columns for selection
+    available_columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
 
-    with col3:
-        # Messaging Theme filter
-        messaging_theme_options = ["All"] + sorted(data['Messaging Theme'].unique())
-        selected_messaging_theme = st.selectbox('Select Messaging Theme:', messaging_theme_options, index=0)
-
-    with col4:
-        # Creative Theme filter
-        creative_theme_options = ["All"] + sorted(data['Creative Theme'].unique())
-        selected_creative_theme = st.selectbox('Select Creative Theme:', creative_theme_options, index=0)
-
-    with col5:
-        # Ad Format filter
-        format_options = ["All"] + sorted(data['Ad Format'].unique())
-        selected_format = st.selectbox('Select Ad Format:', format_options, index=0)
-
-    with col6:
-        # Landing Page Type filter
-        landing_page_options = ["All"] + sorted(data['Landing Page Type'].unique())
-        selected_landing_page = st.selectbox('Select Landing Page Type:', landing_page_options, index=0)
-
-    with col7:
-        # Creative Imagery filter
-        creative_imagery_options = ["All"] + sorted(data['Creative Imagery'].unique())
-        selected_creative_imagery = st.selectbox('Select Creative Imagery:', creative_imagery_options, index=0)
-
-    with col8:
-        # Text Hook filter
-        text_hook_options = ["All"] + sorted(data['Text Hook'].unique())
-        selected_text_hook = st.selectbox('Select Text Hook:', text_hook_options, index=0)
-
-    # Step 4: Filter the data based on selected criteria
-    filtered_data = filter_data(
-        data, selected_batch, start_date, end_date, 
-        selected_messaging_theme, selected_creative_theme, 
-        selected_format, selected_landing_page, 
-        selected_creative_imagery, selected_text_hook
+    # Let the user select which variables to include in the analysis, with default set to Messaging and Creative Theme
+    selected_columns = st.multiselect(
+        'Select Variables to Include in Analysis:',
+        available_columns,  # Full list of options
+        default=['Messaging Theme', 'Creative Theme']  # Default selection
     )
 
-    # Step 5: Group the data by Ad Name and aggregate the numeric columns
-    grouped_data = filtered_data.groupby('Ad Name').agg({
-        'Messaging Theme': 'first',
-        'Creative Theme': 'first',
-        'Ad Format': 'first',
-        'Landing Page Type': 'first',
-        'Creative Imagery': 'first',
-        'Text Hook': 'first',
-        'Purchases': 'sum',
-        'Spend': 'sum',
-        'Clicks': 'sum',
-        'Impressions': 'sum',
-        'Ad Preview Shareable Link': 'first'  # Get the first Ad Preview Link
+    # Step 4: Add filters for each selected column
+    selected_filters = {}
+    for column in selected_columns:
+        unique_values = ["All"] + sorted(data[column].dropna().unique())
+        selected_value = st.selectbox(f'Filter by {column}:', unique_values, index=0)
+        selected_filters[column] = selected_value
+
+    # Control for the number of combinations
+    num_combos = len(selected_columns)
+
+    # Step 5: Filter the data based on Batch, Date, and selected column filters
+    filtered_data = filter_data(data, selected_batch, start_date, end_date, selected_filters)
+
+    # Step 6: Generate the cross-sectional analysis table
+    combo_table = cross_section_analysis(filtered_data, num_combos, selected_columns)
+
+    display_df = combo_table.copy()
+    display_df['Spend'] = display_df['Spend'].apply(lambda x: f"${x:,.0f}")
+    display_df['CPM'] = display_df['CPM'].apply(lambda x: f"${x:,.2f}")
+    display_df['CPA'] = display_df['CPA'].apply(lambda x: f"${x:,.2f}")
+    display_df['CPC'] = display_df['CPC'].apply(lambda x: f"${x:,.2f}")
+
+    # Step 7: Display the filtered combo table
+    st.dataframe(display_df, use_container_width=True)
+
+# Run the dashboard
+password_protection()
