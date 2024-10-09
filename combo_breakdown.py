@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Function to filter the data based on selected criteria
-def filter_data(data, selected_batch, start_date, end_date, selected_messaging_theme, selected_creative_theme, selected_format, selected_landing_page):
+def filter_data(data, selected_batch, start_date, end_date, selected_messaging_theme, selected_creative_theme, selected_format, selected_landing_page, selected_creative_imagery, selected_text_hook):
     # Apply Batch and Date filters
     if selected_batch != "All":
         data = data[data['Batch'] == selected_batch]
@@ -26,6 +26,14 @@ def filter_data(data, selected_batch, start_date, end_date, selected_messaging_t
     if selected_landing_page != "All":
         data = data[data['Landing Page Type'] == selected_landing_page]
 
+    # Apply Creative Imagery filter
+    if selected_creative_imagery != "All":
+        data = data[data['Creative Imagery'] == selected_creative_imagery]
+
+    # Apply Text Hook filter
+    if selected_text_hook != "All":
+        data = data[data['Text Hook'] == selected_text_hook]
+
     return data
 
 # Main function for Combo Breakdown page
@@ -33,7 +41,7 @@ def main():
     # Load the data from session state (assuming it's already loaded)
     data = st.session_state.full_data
 
-    # Prepare the data (assuming relevant columns like 'Messaging Theme' and 'Creative Theme' exist)
+    # Prepare the data (assuming relevant columns exist)
     data.columns = data.columns.str.replace('__Facebook_Ads', '', regex=False)
     data.columns = data.columns.str.replace('_', ' ', regex=False)
 
@@ -46,6 +54,8 @@ def main():
     data['Batch'].fillna('No Batch', inplace=True)
     data['Ad Format'].fillna('N/A', inplace=True)
     data['Landing Page Type'].fillna('N/A', inplace=True)
+    data['Creative Imagery'].fillna('N/A', inplace=True)
+    data['Text Hook'].fillna('N/A', inplace=True)
 
     # Step 1: Create a new "Batch" column from "Ad Name" (if it doesn't exist already)
     if 'Batch' not in data.columns:
@@ -71,8 +81,8 @@ def main():
         else:
             start_date, end_date = min_date, max_date  # Default to full date range if not fully selected
 
-    # Step 3: Additional filters for Messaging Theme, Creative Theme, Ad Format, and Landing Page Type
-    col3, col4, col5, col6 = st.columns(4)
+    # Step 3: Additional filters for Messaging Theme, Creative Theme, Ad Format, Landing Page Type, Creative Imagery, and Text Hook
+    col3, col4, col5, col6, col7, col8 = st.columns(6)
 
     with col3:
         # Messaging Theme filter
@@ -94,8 +104,23 @@ def main():
         landing_page_options = ["All"] + sorted(data['Landing Page Type'].unique())
         selected_landing_page = st.selectbox('Select Landing Page Type:', landing_page_options, index=0)
 
+    with col7:
+        # Creative Imagery filter
+        creative_imagery_options = ["All"] + sorted(data['Creative Imagery'].unique())
+        selected_creative_imagery = st.selectbox('Select Creative Imagery:', creative_imagery_options, index=0)
+
+    with col8:
+        # Text Hook filter
+        text_hook_options = ["All"] + sorted(data['Text Hook'].unique())
+        selected_text_hook = st.selectbox('Select Text Hook:', text_hook_options, index=0)
+
     # Step 4: Filter the data based on selected criteria
-    filtered_data = filter_data(data, selected_batch, start_date, end_date, selected_messaging_theme, selected_creative_theme, selected_format, selected_landing_page)
+    filtered_data = filter_data(
+        data, selected_batch, start_date, end_date, 
+        selected_messaging_theme, selected_creative_theme, 
+        selected_format, selected_landing_page, 
+        selected_creative_imagery, selected_text_hook
+    )
 
     # Step 5: Group the data by Ad Name and aggregate the numeric columns
     grouped_data = filtered_data.groupby('Ad Name').agg({
@@ -103,6 +128,8 @@ def main():
         'Creative Theme': 'first',
         'Ad Format': 'first',
         'Landing Page Type': 'first',
+        'Creative Imagery': 'first',
+        'Text Hook': 'first',
         'Purchases': 'sum',
         'Spend': 'sum',
         'Clicks': 'sum',
