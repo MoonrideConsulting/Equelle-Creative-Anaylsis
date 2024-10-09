@@ -39,25 +39,24 @@ def create_treemap(data, main_column, secondary_column, theme_value):
     data = data[data['CPA'] > 0]
     data = data[data['Purchases'] > 0]
     
-    #round CPA to look better
+    # Round CPA to look better
     data['CPA'] = round(data['CPA'], 2)
     
     fig = px.treemap(
-    data,
-    path=[secondary_column],
-    values='Purchases',
-    color='CPA',
-    #range_color = [150, 350],
-    color_continuous_scale=[
-        (0.0, 'green'),  # Green at the low end (0)
-        (0.5, 'yellow'),  # Yellow in the middle (0.5)
-        (1.0, 'red')  # Red at the high end (1)
-    ],
-    title=f'Treemap of {theme_value} and {secondary_column}s',
-    hover_data={
-        'Purchases': True,  # Show
-        'CPA': True,        # Show
-    }
+        data,
+        path=[secondary_column],
+        values='Purchases',
+        color='CPA',
+        color_continuous_scale=[
+            (0.0, 'green'),  # Green at the low end (0)
+            (0.5, 'yellow'),  # Yellow in the middle (0.5)
+            (1.0, 'red')  # Red at the high end (1)
+        ],
+        title=f'Treemap of {theme_value} and {secondary_column}s',
+        hover_data={
+            'Purchases': True,  # Show
+            'CPA': True,        # Show
+        }
     )
 
     fig.update_traces(branchvalues='remainder')
@@ -101,7 +100,8 @@ def main():
         else:
             start_date, end_date = min_date, max_date  # Default to full date range if not fully selected
 
-    available_columns = ['Messaging Theme', 'Creative Theme', 'Ad Format', 'Landing Page Type']
+    # Add Creative Imagery and Text Hook to available columns
+    available_columns = ['Messaging Theme', 'Creative Theme', 'Ad Format', 'Landing Page Type', 'Creative Imagery', 'Text Hook']
 
     main_column = st.selectbox('Select Main Column:', available_columns, index=0)
     secondary_column = st.selectbox('Select Secondary Column:', available_columns, index=1)
@@ -131,7 +131,7 @@ def main():
         filtered_combos = combo_rankings[combo_rankings[main_column] == theme_value]
 
         # Display treemap in the dropdown
-        with st.expander(f"See combinations with Creative Theme for {theme_value}"):
+        with st.expander(f"See combinations with {secondary_column} for {theme_value}"):
             # Create and display the treemap
             treemap_fig = create_treemap(filtered_combos, main_column, secondary_column, theme_value)
             st.plotly_chart(treemap_fig)
