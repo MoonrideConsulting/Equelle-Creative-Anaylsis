@@ -120,8 +120,8 @@ def main_dashboard():
         else:
             start_date, end_date = min_date, max_date  # Default to full date range if not fully selected
 
-    # Define available columns for selection
-    available_columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type']
+    # Define available columns for selection including Creative Imagery and Text Hook
+    available_columns = ['Ad Format', 'Creative Theme', 'Messaging Theme', 'Landing Page Type', 'Creative Imagery', 'Text Hook']
 
     # Let the user select which variables to include in the analysis, with default set to Messaging and Creative Theme
     selected_columns = st.multiselect(
