@@ -44,11 +44,11 @@ def create_treemap(data, main_column, secondary_column, theme_value):
 
     # Define custom color map based on CPA value ranges
     def map_color(cpa_value):
-        if cpa_value < 100:
+        if cpa_value < 200:
             return 'green'
-        elif 200 <= cpa_value < 250:
+        elif 200 >= cpa_value < 250:
             return 'seagreen'
-        elif 250 <= cpa_value < 300:
+        elif 250 >= cpa_value < 300:
             return 'orange'
         else:
             return 'red'
