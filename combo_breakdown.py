@@ -55,8 +55,11 @@ def main():
     if 'Batch' not in data.columns:
         data['Batch'] = data['Ad Name'].apply(lambda x: x.split('Batch')[-1].strip() if 'Batch' in x else 'No Batch')
     
-    # Replace None or missing values with 'N/A' in critical columns
-    data_copy = data['Messaging Theme'].fillna('N/A', inplace=True)
+    # Create a copy of the original data for the combo breakdown page
+    data_copy = data.copy()
+
+    # Replace None or missing values with 'N/A' in critical columns in the copied dataset
+    data_copy['Messaging Theme'].fillna('N/A', inplace=True)
     data_copy['Creative Theme'].fillna('N/A', inplace=True)
     data_copy['Ad Format'].fillna('N/A', inplace=True)
     data_copy['Landing Page Type'].fillna('N/A', inplace=True)
