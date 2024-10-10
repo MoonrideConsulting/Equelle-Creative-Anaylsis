@@ -49,13 +49,13 @@ def main():
     data.rename(columns={'Clicks all': 'Clicks', 'Amount Spent': 'Spend'}, inplace=True)
 
     # Replace None or missing values with 'N/A' in critical columns
-    #data['Messaging Theme'].fillna('N/A', inplace=True)
-    #data['Creative Theme'].fillna('N/A', inplace=True)
-    #data['Batch'].fillna('No Batch', inplace=True)
-    #data['Ad Format'].fillna('N/A', inplace=True)
-    #data['Landing Page Type'].fillna('N/A', inplace=True)
-    #data['Creative Imagery'].fillna('N/A', inplace=True)
-    #data['Text Hook'].fillna('N/A', inplace=True)
+    data['Messaging Theme'].fillna('N/A', inplace=True)
+    data['Creative Theme'].fillna('N/A', inplace=True)
+    data['Batch'].fillna('No Batch', inplace=True)
+    data['Ad Format'].fillna('N/A', inplace=True)
+    data['Landing Page Type'].fillna('N/A', inplace=True)
+    data['Creative Imagery'].fillna('N/A', inplace=True)
+    data['Text Hook'].fillna('N/A', inplace=True)
 
     # Step 1: Create a new "Batch" column from "Ad Name" (if it doesn't exist already)
     if 'Batch' not in data.columns:
