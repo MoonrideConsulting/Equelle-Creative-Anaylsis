@@ -49,7 +49,7 @@ def main():
     data.rename(columns={'Clicks all': 'Clicks', 'Amount Spent': 'Spend'}, inplace=True)
 
     # Fix missing batches
-    #data['Batch'].fillna('No Batch', inplace=True)
+    data['Batch'].fillna('No Batch', inplace=True)
 
     # Step 1: Create a new "Batch" column from "Ad Name" (if it doesn't exist already)
     if 'Batch' not in data.columns:
