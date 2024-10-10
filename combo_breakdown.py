@@ -48,31 +48,33 @@ def main():
     # Change Names of Clicks and Spend columns
     data.rename(columns={'Clicks all': 'Clicks', 'Amount Spent': 'Spend'}, inplace=True)
 
-    # Replace None or missing values with 'N/A' in critical columns
-    data['Messaging Theme'].fillna('N/A', inplace=True)
-    data['Creative Theme'].fillna('N/A', inplace=True)
-    data['Batch'].fillna('No Batch', inplace=True)
-    data['Ad Format'].fillna('N/A', inplace=True)
-    data['Landing Page Type'].fillna('N/A', inplace=True)
-    data['Creative Imagery'].fillna('N/A', inplace=True)
-    data['Text Hook'].fillna('N/A', inplace=True)
+    # Fix missing batches
+    #data['Batch'].fillna('No Batch', inplace=True)
 
     # Step 1: Create a new "Batch" column from "Ad Name" (if it doesn't exist already)
     if 'Batch' not in data.columns:
         data['Batch'] = data['Ad Name'].apply(lambda x: x.split('Batch')[-1].strip() if 'Batch' in x else 'No Batch')
+    
+    # Replace None or missing values with 'N/A' in critical columns
+    data_copy = data['Messaging Theme'].fillna('N/A', inplace=True)
+    data_copy['Creative Theme'].fillna('N/A', inplace=True)
+    data_copy['Ad Format'].fillna('N/A', inplace=True)
+    data_copy['Landing Page Type'].fillna('N/A', inplace=True)
+    data_copy['Creative Imagery'].fillna('N/A', inplace=True)
+    data_copy['Text Hook'].fillna('N/A', inplace=True)
 
     # Step 2: Batch and Date filters at the top
     col1, col2 = st.columns(2)
 
     with col1:
         # Batch filter
-        batch_options = ["All"] + sorted(data['Batch'].unique())
+        batch_options = ["All"] + sorted(data_copy['Batch'].unique())
         selected_batch = st.selectbox('Select Batch:', batch_options, index=0)
 
     with col2:
         # Date range filter
-        min_date = data['Date'].min()
-        max_date = data['Date'].max()
+        min_date = data_copy['Date'].min()
+        max_date = data_copy['Date'].max()
         date_range = st.date_input("Select Date Range", [min_date, max_date], min_value=min_date, max_value=max_date)
 
         # Ensure both start_date and end_date are selected
@@ -86,37 +88,37 @@ def main():
 
     with col3:
         # Messaging Theme filter
-        messaging_theme_options = ["All"] + sorted(data['Messaging Theme'].unique())
+        messaging_theme_options = ["All"] + sorted(data_copy['Messaging Theme'].unique())
         selected_messaging_theme = st.selectbox('Select Messaging Theme:', messaging_theme_options, index=0)
 
     with col4:
         # Creative Theme filter
-        creative_theme_options = ["All"] + sorted(data['Creative Theme'].unique())
+        creative_theme_options = ["All"] + sorted(data_copy['Creative Theme'].unique())
         selected_creative_theme = st.selectbox('Select Creative Theme:', creative_theme_options, index=0)
 
     with col5:
         # Ad Format filter
-        format_options = ["All"] + sorted(data['Ad Format'].unique())
+        format_options = ["All"] + sorted(data_copy['Ad Format'].unique())
         selected_format = st.selectbox('Select Ad Format:', format_options, index=0)
 
     with col6:
         # Landing Page Type filter
-        landing_page_options = ["All"] + sorted(data['Landing Page Type'].unique())
+        landing_page_options = ["All"] + sorted(data_copy['Landing Page Type'].unique())
         selected_landing_page = st.selectbox('Select Landing Page Type:', landing_page_options, index=0)
 
     with col7:
         # Creative Imagery filter
-        creative_imagery_options = ["All"] + sorted(data['Creative Imagery'].unique())
+        creative_imagery_options = ["All"] + sorted(data_copy['Creative Imagery'].unique())
         selected_creative_imagery = st.selectbox('Select Creative Imagery:', creative_imagery_options, index=0)
 
     with col8:
         # Text Hook filter
-        text_hook_options = ["All"] + sorted(data['Text Hook'].unique())
+        text_hook_options = ["All"] + sorted(data_copy['Text Hook'].unique())
         selected_text_hook = st.selectbox('Select Text Hook:', text_hook_options, index=0)
 
     # Step 4: Filter the data based on selected criteria
     filtered_data = filter_data(
-        data, selected_batch, start_date, end_date, 
+        data_copy, selected_batch, start_date, end_date, 
         selected_messaging_theme, selected_creative_theme, 
         selected_format, selected_landing_page, 
         selected_creative_imagery, selected_text_hook
