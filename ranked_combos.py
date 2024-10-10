@@ -33,32 +33,49 @@ def filter_data(data, selected_batch, start_date, end_date):
 
     return data
 
-# Function to create a treemap visualization
+# Function to create a treemap visualization with custom color rules
 def create_treemap(data, main_column, secondary_column, theme_value):
     # Filter out rows where CPA is zero or NaN to avoid errors in the treemap
     data = data[data['CPA'] > 0]
     data = data[data['Purchases'] > 0]
     
-    # Round CPA to look better
+    # Round CPA for better visual clarity
     data['CPA'] = round(data['CPA'], 2)
+
+    # Define custom color map based on CPA value ranges
+    def map_color(cpa_value):
+        if cpa_value < 100:
+            return 'green'
+        elif 200 <= cpa_value < 250:
+            return 'seagreen'
+        elif 250 <= cpa_value < 300:
+            return 'orange'
+        else:
+            return 'red'
+
+    # Apply color mapping based on CPA values
+    data['Color'] = data['CPA'].apply(map_color)
     
+    # Create treemap with custom colors
     fig = px.treemap(
         data,
         path=[secondary_column],
         values='Purchases',
-        color='CPA',
-        color_continuous_scale=[
-            (0.0, 'green'),  # Green at the low end (0)
-            (0.5, 'yellow'),  # Yellow in the middle (0.5)
-            (1.0, 'red')  # Red at the high end (1)
-        ],
+        color='Color',  # Using the mapped 'Color' column
+        color_discrete_map={
+            'green': 'green',
+            'seagreen': 'seagreen',
+            'orange': 'orange',
+            'red': 'red'
+        },
         title=f'Treemap of {theme_value} and {secondary_column}s',
         hover_data={
-            'Purchases': True,  # Show
-            'CPA': True,        # Show
+            'Purchases': True,
+            'CPA': True,
         }
     )
 
+    # Adjust the branch display and layout margins
     fig.update_traces(branchvalues='remainder')
     fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
     
